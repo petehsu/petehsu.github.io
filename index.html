@@ -990,6 +990,132 @@
         body.dark-mode .coolapk-download:hover {
             background: #444;
         }
+
+        /* 移动端适配基础设置 */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 60px 20px;
+            }
+            
+            .hero h1 {
+                font-size: 2.5em;
+            }
+            
+            .hero p {
+                font-size: 1.1em;
+                max-width: 100%;
+            }
+            
+            .features {
+                padding: 40px 20px;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 0;
+            }
+            
+            .feature-item {
+                padding: 20px;
+            }
+            
+            .download {
+                padding: 40px 20px;
+            }
+            
+            .download-buttons {
+                flex-direction: column;
+                width: 100%;
+                max-width: 300px;
+                margin: 20px auto 0;
+            }
+            
+            .download-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .audio-showcase {
+                padding: 40px 20px;
+            }
+            
+            .acknowledgments {
+                padding: 40px 20px;
+            }
+            
+            .acknowledgment-item {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            /* 调整浮动按钮位置 */
+            .floating-buttons {
+                top: auto;
+                bottom: 20px;
+            }
+            
+            .left-buttons {
+                left: 10px;
+            }
+            
+            .right-buttons {
+                right: 10px;
+            }
+            
+            /* 调整页脚样式 */
+            footer {
+                padding: 20px;
+                font-size: 0.9em;
+            }
+            
+            .contact-links {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                justify-content: center;
+                margin-top: 15px;
+            }
+            
+            .contact-links a {
+                margin: 0 5px;
+            }
+            
+            /* 优化模态框在移动端的显示 */
+            .modal-content {
+                width: 85%;
+                padding: 20px;
+                margin: 20px;
+            }
+            
+            .wechat-modal-content {
+                max-width: 90%;
+            }
+            
+            .wechat-modal-content img {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+        
+        /* 针对超小屏幕的优化 */
+        @media (max-width: 360px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+            
+            .hero p {
+                font-size: 1em;
+            }
+            
+            .feature-item h3 {
+                font-size: 1.2em;
+            }
+            
+            .feature-item p {
+                font-size: 0.9em;
+            }
+        }
     </style>
 </head>
 <body>
