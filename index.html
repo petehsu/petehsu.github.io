@@ -353,14 +353,29 @@
         /* 添加滚动提示样式 */
         .scroll-hint {
             position: fixed;
-            bottom: 100px;  /* 调高位置，避免被播放器遮挡 */
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            color: white;
+            color: black !important;
             font-size: 14px;
             opacity: 0.8;
             animation: bounce 2s infinite;
             z-index: 0;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            .scroll-hint {
+                bottom: 200px; /* 显著增加底部距离，确保不被GitHub图标遮挡 */
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .scroll-hint {
+                bottom: 220px; /* 在小屏幕上进一步增加底部距离 */
+                font-size: 12px;
+            }
         }
 
         @keyframes bounce {
@@ -766,7 +781,7 @@
         /* 修改音乐播放器样式 */
         .music-player {
             position: fixed;
-            bottom: 30px;
+            bottom: 50px; /* 将GitHub图标向上移动，原来是30px */
             left: 50%;
             transform: translateX(-50%);
             z-index: 1;
@@ -1355,6 +1370,37 @@
 
         body.dark-mode .audio-item:hover {
             box-shadow: 0 15px 45px rgba(31, 38, 135, 0.25);
+        }
+
+        /* 修改一言在移动端的显示 */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+            .time {
+                font-size: 240px;
+            }
+            .date {
+                font-size: 16px;
+            }
+            .hitokoto {
+                display: none; /* 在移动端隐藏一言 */
+            }
+        }
+
+        /* 小屏幕手机进一步优化 */
+        @media (max-width: 480px) {
+            .time {
+                font-size: 180px;
+            }
+            .date {
+                font-size: 14px;
+            }
+        }
+
+        /* 深色模式下的滚动提示 */
+        body.dark-mode .scroll-hint {
+            color: white; /* 深色模式下改回白色 */
         }
     </style>
 </head>
