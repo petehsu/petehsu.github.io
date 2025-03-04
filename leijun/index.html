@@ -1,2919 +1,467 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>一个摆件 - 优雅的桌面时钟应用</title>
+    <meta charset="utf-8">
+    <title>雷军简介</title>
     <style>
-        * {
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
-            overflow-x: hidden;
-            background: black;
-        }
-
-        /* 背景图层 */
-        .background-layer {
-            position: fixed;
-            top: -10%;
-            left: -10%;
-            width: 120%;
-            height: 120%;
-            background-image: url('https://images.pexels.com/photos/1081111/pexels-photo-1081111.jpeg');
-            background-size: cover;
-            background-position: center;
-            z-index: -2;
-        }
-
-        /* 时钟容器 */
-        .clock-container {
-            height: 100vh;
-            scroll-snap-align: start;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            left: 0;
-            will-change: transform;
-            transform: translateZ(0);
-        }
-
-        .clock {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            text-align: center;
-            z-index: 1;
-            width: 100%;
-        }
-
-        /* 时间显示 */
-        .time {
-            font-size: 480px;
-            font-weight: 900;
-            letter-spacing: -8px;
-            opacity: 0.53;
-            animation: fadeIn 2s ease-out;
-        }
-
-        /* 日期显示 */
-        .date {
-            font-size: 20px;
-            font-weight: 300;
-            letter-spacing: 2px;
-            opacity: 0.7;
-            animation: fadeIn 2s ease-out 0.5s backwards;
-        }
-
-        /* 一言显示 */
-        .hitokoto {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            color: white;
-            font-size: 16px;
-            opacity: 0.7;
-            text-align: right;
-            max-width: 300px;
-            z-index: 1;
-            animation: fadeIn 2s ease-out 1s backwards;
-            transition: opacity 0.5s ease;
-        }
-        .hitokoto:hover {
-            opacity: 1;
-        }
-
-        /* 前景图层 */
-        .foreground-layer {
-            position: fixed;
-            top: -10%;
-            left: -10%;
-            width: 120%;
-            height: 120%;
-            background-image: url('./assets/fg.png');
-            background-size: cover;
-            background-position: center;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 1;
-        }
-
-        /* 内容区域 */
-        .content-wrapper {
-            position: relative;
-            z-index: 3;
-            background: rgba(255, 255, 255, 0.95);
-            margin-top: 100vh;  /* 保持这个值 */
-            border-radius: 20px 20px 0 0;
-            padding: 40px 0;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
-            scroll-snap-align: start;  /* 添加这行 */
-            will-change: transform; /* 添加性能优化 */
-            transform: translateZ(0); /* 开启硬件加速 */
-        }
-
-        .hero {
-            background: transparent;
-            padding: 80px 20px;
-            text-align: center;
-            position: relative;
-        }
-
-        .hero h1 {
-            font-size: 3em;
-            margin-bottom: 20px;
-            color: #2c3e50;
-            text-shadow: none;
-        }
-
-        .hero p {
-            font-size: 1.2em;
-            max-width: 600px;
-            margin: 0 auto;
-            color: #666;
-            text-shadow: none;
-        }
-
-        /* 保持其他样式不变 */
-        .features {
-            padding: 80px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            background: transparent;
-        }
-
-        .features h2 {
-            text-align: center;
-            margin-bottom: 50px;
-            color: #2c3e50;
-        }
-
-        /* 修改功能网格布局 */
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            opacity: 1;
-            transition: opacity 0.5s ease;
-        }
-
-        .feature-grid.visible {
-            opacity: 1;
-        }
-
-        /* 添加图标样式 */
-        .feature-icon {
-            width: 48px;
-            height: 48px;
-            margin-bottom: 16px;
-            opacity: 0.8;
-            transition: transform 0.3s ease;
+            background-color: #f5f5f5;
         }
         
-        .feature-item:hover .feature-icon {
-            transform: scale(1.1);
-        }
-
-        /* 修改功能板块样式 */
-        .feature-item {
-            padding: 20px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .header {
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.6s ease;
-            will-change: opacity, transform;
+            margin-bottom: 30px;
+            padding: 40px 0;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-
-        /* 为每个功能板块设置不同的过渡延迟 */
-        .features:nth-of-type(1) .feature-item:nth-child(1) { transition-delay: 0.1s; }
-        .features:nth-of-type(1) .feature-item:nth-child(2) { transition-delay: 0.2s; }
-        .features:nth-of-type(1) .feature-item:nth-child(3) { transition-delay: 0.3s; }
-        .features:nth-of-type(1) .feature-item:nth-child(4) { transition-delay: 0.4s; }
-        .features:nth-of-type(1) .feature-item:nth-child(5) { transition-delay: 0.5s; }
-        .features:nth-of-type(1) .feature-item:nth-child(6) { transition-delay: 0.6s; }
-
-        /* 为未来更新板块设置不同的过渡延迟 */
-        .features:nth-of-type(2) .feature-item:nth-child(1) { transition-delay: 0.1s; }
-        .features:nth-of-type(2) .feature-item:nth-child(2) { transition-delay: 0.2s; }
-        .features:nth-of-type(2) .feature-item:nth-child(3) { transition-delay: 0.3s; }
-        .features:nth-of-type(2) .feature-item:nth-child(4) { transition-delay: 0.4s; }
-        .features:nth-of-type(2) .feature-item:nth-child(5) { transition-delay: 0.5s; }
-        .features:nth-of-type(2) .feature-item:nth-child(6) { transition-delay: 0.6s; }
-
-        /* 可见时的样式 */
-        .feature-item.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* 悬停效果 */
-        .feature-item:hover {
-            transform: translateY(-5px) scale(1.02) !important;
-            box-shadow: 0 5px 15px rgba(255,255,255,0.1);
-        }
-
-        .feature-item h3 {
-            margin-bottom: 15px;
-            color: #2c3e50;
-        }
-
-        .feature-item p {
-            color: #666;
-        }
-
-        .download {
-            background: transparent;
-            padding: 80px 20px;
+        
+        .nav {
+            background-color: #333;
+            padding: 15px 0;
+            margin-bottom: 20px;
             text-align: center;
         }
-
-        /* 修改下载按钮样式 */
-        .download-btn {
-            display: inline-block !important;
-            padding: 12px 24px;
-            background: #24292e !important; /* 统一使用黑色背景 */
-            color: white !important;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            font-size: 16px;
-            min-width: 150px;
-            text-align: center;
-        }
-
-        .download-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        footer {
-            background: rgba(44, 62, 80, 0.5);
+        
+        .nav a {
             color: white;
-            text-align: center;
-            padding: 20px;
-            backdrop-filter: blur(5px);
+            text-decoration: none;
+            margin: 0 30px;
+            font-size: 18px;
         }
-
-        .footer-content {
-            max-width: 800px;
+        
+        .nav a:hover {
+            color: #ddd;
+        }
+        
+        .content {
+            background-color: white;
+            padding: 50px 10%;
+            border-radius: 0;
+            max-width: 1600px;
             margin: 0 auto;
+            overflow: hidden;
         }
-
-        .contact-links {
-            display: block;
+        
+        .section {
+            margin-bottom: 60px;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+        
+        h1 {
+            font-size: 36px;
+            color: #333;
+            padding-bottom: 10px;
+            margin: 0;
+        }
+        
+        h2 {
+            font-size: 28px;
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+            margin-top: 40px;
+        }
+        
+        .character-img {
+            width: 500px;
+            height: auto;
+            float: right;
+            margin: 0 0 40px 60px;
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            background-color: white;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .character-img:hover {
+            transform: rotate3d(1, 1, 0, 10deg) scale(1.05);
+            cursor: pointer;
+        }
+        
+        .skill {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
             margin-top: 10px;
-            font-size: 14px;
+        }
+        
+        p {
+            margin: 1.2em 0;
+            font-size: 16px;
+        }
+        
+        ul {
+            padding-left: 20px;
             line-height: 1.8;
         }
         
-        .contact-links a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: color 0.3s ease;
-            padding: 0 5px;
-        }
-        
-        .contact-links a:hover {
-            color: white;
-            text-decoration: underline;
-        }
-
-        .footer-content p {
-            margin-bottom: 10px;
-        }
-
-        .acknowledgments {
-            margin-top: 30px;
-            padding: 40px 20px;
-            background: transparent;
-        }
-
-        .acknowledgments h3 {
-            text-align: center;
-            margin-bottom: 50px;
-            font-size: 2em;
-            color: #2c3e50;
-        }
-
-        .acknowledgments-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            max-width: 1200px;
-            margin: 0 auto;
-            gap: 15px;
-            padding: 0 40px;
-        }
-
-        .acknowledgment-item {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            border-radius: 8px;
-            padding: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            min-height: 120px;
-        }
-
-        .acknowledgment-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-        }
-
-        .acknowledgment-item .name {
-            color: #2c3e50;
-            font-weight: 500;
-            font-size: 18px;
-            margin-bottom: 8px;
-        }
-
-        .acknowledgment-item .contribution {
-            display: none;
-            font-size: 14px;
-            color: #666;
-            opacity: 0.7;
-            margin-top: 8px;
-            line-height: 1.6;
-            padding: 0 10px;
-        }
-
-        .acknowledgment-item.expanded .contribution {
-            display: block;
-            animation: expandIn 0.3s ease;
-        }
-
-        @keyframes expandIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* 添加滚动提示样式 */
-        .scroll-hint {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(0, 0, 0, 0.9);  /* 始终使用黑色 */
-            font-size: 16px;
-            opacity: 0.9;
-            z-index: 2;
-            animation: bounce 2s infinite;
-            cursor: pointer;
-            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);  /* 添加白色阴影提高可读性 */
-        }
-
-        /* 添加弹跳动画 */
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {
-                transform: translateX(-50%) translateY(0);
-            }
-            40% {
-                transform: translateX(-50%) translateY(-10px);
-            }
-            60% {
-                transform: translateX(-50%) translateY(-5px);
-            }
-        }
-
-        /* 移动端适配 */
-        @media (max-width: 768px) {
-            .scroll-hint {
-                bottom: 120px;  /* 从 250px 改为 120px */
-                font-size: 13px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .scroll-hint {
-                bottom: 100px;  /* 从 270px 改为 100px */
-                font-size: 12px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2em;
-            }
-            .time {
-                font-size: 240px;
-            }
-            .date {
-                font-size: 16px;
-            }
-            .hitokoto {
-                display: none;  /* 在移动端隐藏一言 */
-            }
-        }
-
-        @media (max-width: 480px) {
-            .time {
-                font-size: 180px;  /* 在更小的屏幕上进一步缩小时钟字体 */
-            }
-        }
-
-        /* 添加动画关键帧 */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 0.7;
-                transform: translateY(0);
-            }
-        }
-
-        /* 添加汇入动画关键帧 */
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* 添加音频图片展示区样式 */
-        .audio-showcase {
-            padding: 80px 20px;
-            background: transparent;
-            text-align: center;
-        }
-
-        .audio-showcase h2 {
-            font-size: 2.5em;
-            color: #2c3e50;
-            margin-bottom: 50px;
-            font-weight: 300;
-        }
-
-        /* 修改音频展示区网格布局 */
-        .audio-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);  /* 默认四列 */
-            gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* 调整音频卡片尺寸，确保四个能在一行显示 */
-        .audio-item {
-            /* 保持其他样式不变 */
-            position: relative;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
-        }
-
-        /* 调整图片高度，使其更协调 */
-        .audio-player img {
-            width: 100%;
-            height: 220px; /* 稍微降低高度，使四个卡片在一行时看起来更合适 */
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .audio-item:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 45px rgba(31, 38, 135, 0.25);
-        }
-
-        .audio-player {
-            position: relative;
-            cursor: pointer;
-        }
-
-        .audio-info {
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(5px);
-        }
-
-        .audio-title {
-            font-size: 1.2em;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: #2c3e50;
-        }
-
-        .audio-artist {
-            font-size: 0.9em;
-            color: #666;
-            opacity: 0.8;
-            display: block; /* 确保显示 */
-        }
-
-        /* 修改播放指示器样式 */
-        .play-indicator {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.15s ease;
-            pointer-events: none;
-            color: #000;
-        }
-
-        /* 确保在深色模式下也保持黑色 */
-        .audio-item .play-indicator,
-        body.dark-mode .audio-item .play-indicator {
-            color: #000;
-        }
-
-        /* 覆盖任何可能的深色模式样式 */
-        .dark-mode .audio-player .play-indicator {
-            color: #000;
-        }
-
-        .audio-item:hover .play-indicator {
-            opacity: 1;
-        }
-
-        /* 修改下载按钮样式 */
-        .download-audio {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 36px;
-            height: 36px;
-            background: #2c3e50;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.2s ease;
-            opacity: 0;
-            z-index: 2;
-            padding: 8px;
-        }
-
-        .audio-item:hover .download-audio {
-            opacity: 1;
-        }
-
-        .download-audio:hover {
-            background: #1a252f;
-        }
-
-        /* 弹窗样式 */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* 下载确认弹窗的背景 */
-        #downloadModal {
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 500px;
-            width: 90%;
-            text-align: left;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: 500;
-            margin-bottom: 20px;
-            color: #2c3e50;
-        }
-
-        .modal-text {
-            margin-bottom: 20px;
-            line-height: 1.6;
-            color: #666;
-        }
-
-        .agreement-checkbox {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .modal-buttons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        .modal-button {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .cancel-button {
-            background: #e0e0e0;
-        }
-
-        .download-button {
-            background: #2c3e50;
-            color: white;
-        }
-
-        .download-button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        /* 修改悬浮按钮样式 */
-        .floating-buttons {
+        /* 主题切换按钮样式 */
+        .theme-switch {
             position: fixed;
             top: 20px;
+            left: 20px;
             z-index: 100;
-        }
-
-        .floating-button {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.3);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 10px;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
-        }
-
-        .floating-button:hover {
-            background: rgba(0, 0, 0, 0.5);
-            transform: scale(1.1);
-        }
-
-        .floating-button svg {
-            width: 20px;
-            height: 20px;
-            fill: white;
-        }
-
-        .left-buttons {
-            left: 30px;
-        }
-
-        .right-buttons {
-            right: 30px;
-        }
-
-        /* 完善夜间模式样式 */
-        body.dark-mode {
-            background: #121212;
-        }
-
-        body.dark-mode .content-wrapper {
-            background: rgba(0, 0, 0, 0.85);
-            color: #fff;
-        }
-
-        body.dark-mode .hero h1,
-        body.dark-mode .features h2,
-        body.dark-mode .download h2,
-        body.dark-mode .audio-showcase h2,
-        body.dark-mode .acknowledgments h3 {
-            color: #fff;
-        }
-
-        body.dark-mode .feature-icon {
-            filter: invert(1);
-            opacity: 0.9;
-        }
-
-        body.dark-mode .feature-item {
-            background: rgba(255, 255, 255, 0.05);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        body.dark-mode .feature-item h3 {
-            color: #fff;
-        }
-
-        body.dark-mode .feature-item p {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        body.dark-mode .acknowledgment-item {
-            background: rgba(255, 255, 255, 0.05);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        body.dark-mode .acknowledgment-item .name {
-            color: #fff;
-        }
-
-        body.dark-mode .acknowledgment-item .contribution {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        body.dark-mode .acknowledgment-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        body.dark-mode .modal-content {
-            background: #1e1e1e;
-            color: #fff;
-        }
-
-        body.dark-mode .modal-title {
-            color: #fff;
-        }
-
-        body.dark-mode .modal-text {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        body.dark-mode .cancel-button {
             background: #333;
-            color: #fff;
-        }
-
-        body.dark-mode .download-button {
-            background: #4a90e2;
-        }
-
-        /* 修改音频卡片样式 */
-        .audio-title {
-            color: #2c3e50;
-        }
-
-        body.dark-mode .audio-title {
             color: white;
-        }
-
-        .audio-artist {
-            color: #666;
-        }
-
-        body.dark-mode .audio-artist {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        /* 修改音乐播放器样式 */
-        .music-player {
-            position: fixed;
-            bottom: 50px; /* 将GitHub图标向上移动，原来是30px */
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-radius: 30px;
-            backdrop-filter: blur(10px);
-            background: rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            width: 60px;  /* 默认宽度刚好容纳图标 */
-            overflow: hidden;
-        }
-
-        .music-player:hover {
-            background: rgba(0, 0, 0, 0.5);
-            width: auto;  /* 悬停时自动展开 */
-            padding-right: 20px;
-        }
-
-        .github-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
             border: none;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;  /* 防止图标被压缩 */
-        }
-
-        .music-info {
-            color: white;
-            font-size: 14px;
-            opacity: 0.8;
-            max-width: 0;
-            overflow: hidden;
-            white-space: nowrap;
-            margin-left: 0;
-            transition: all 0.3s ease;
-            padding-left: 15px;
-        }
-
-        .music-player:hover .music-info {
-            max-width: 200px;
-        }
-
-        .contact-links {
-            display: block;
-            margin-top: 10px;
-            font-size: 14px;
-        }
-        
-        .contact-links a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .contact-links a:hover {
-            color: white;
-        }
-
-        /* WeChat模态框样式 */
-        .modal.wechat-modal {
-            background: rgba(0, 0, 0, 0.2);
-            animation: modalFadeIn 0.3s ease;
-        }
-
-        .wechat-modal-content {
-            background: rgba(255, 255, 255, 0.2) !important;
-            backdrop-filter: blur(10px) !important;
-            -webkit-backdrop-filter: blur(10px) !important;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            border-radius: 20px !important;
-            color: white;
-            animation: modalContentSlideIn 0.3s ease;
-            transform: scale(1);
-            transition: transform 0.3s ease;
-        }
-        
-        @keyframes modalFadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes modalContentSlideIn {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        /* 深色模式下的样式 */
-        body.dark-mode .wechat-modal-content {
-            background: rgba(0, 0, 0, 0.2) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .wechat-modal-content img {
-            border-radius: 10px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-        }
-        
-        .wechat-modal-content .cancel-button {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            padding: 8px 20px;
+            padding: 10px 20px;
             border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-switch:hover {
+            background: #555;
+        }
+        
+        /* 语言切换按钮样式 */
+        .lang-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: #333;
             color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
         
-        .wechat-modal-content .cancel-button:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
+        .lang-switch:hover {
+            background: #555;
         }
         
-        body.dark-mode .wechat-modal-content .cancel-button {
-            background: rgba(0, 0, 0, 0.3);
-        }
-        
-        body.dark-mode .wechat-modal-content .cancel-button:hover {
-            background: rgba(0, 0, 0, 0.4);
-        }
-
-        .wechat-modal-content:hover {
-            transform: scale(1.02);
-        }
-
-        /* 下载按钮容器样式 */
-        .download-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 20px;
-            flex-wrap: wrap;  /* 允许按钮换行 */
-        }
-        
-        /* 下载按钮基础样式 */
-        .download-btn {
-            display: inline-block !important;
-            padding: 12px 24px;
-            background: #24292e !important;
-            color: white !important;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            font-size: 16px;
-            min-width: 150px;
-            text-align: center;
-        }
-        
-        /* 按钮悬停效果 */
-        .download-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-        
-        /* 移动端适配 */
-        @media (max-width: 768px) {
-            .download-buttons {
-                gap: 10px;  /* 减小按钮间距 */
-                padding: 0 15px;  /* 添加两侧内边距 */
-            }
-            
-            .download-btn {
-                font-size: 14px;  /* 减小字体大小 */
-                padding: 10px 20px;  /* 减小内边距 */
-                min-width: 130px;  /* 减小最小宽度 */
-            }
-        }
-
-        /* 删除之前的单列布局代码 */
-        @media (max-width: 480px) {
-            .download-buttons {
-                gap: 8px;  /* 进一步减小间距 */
-            }
-            
-            .download-btn {
-                font-size: 13px;
-                padding: 8px 16px;
-                min-width: 120px;
-            }
-        }
-
-        /* 添加致谢卡片的展开动画样式 */
-        .acknowledgment-item .contribution {
-            display: none;
-            font-size: 14px;
-            color: #666;
-            opacity: 0.7;
-            margin-top: 8px;
-            line-height: 1.6;
-                padding: 0 10px;
-            }
-            
-        .acknowledgment-item.expanded .contribution {
-            display: block;
-            animation: expandIn 0.3s ease;
-        }
-
-        @keyframes expandIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* 深色模式适配 */
-        body.dark-mode .acknowledgment-item .contribution {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .voice-actor {
-                font-size: 0.9em;
-            color: #666;
-            margin-top: 5px;
-            text-align: center;
-            padding: 8px 0;
-        }
-
-        body.dark-mode .voice-actor {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        .audio-info {
-                padding: 15px;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(5px);
-            text-align: center;
-            }
-
-        .audio-title {
-                font-size: 1.1em;
-            font-weight: 500;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-
-        /* 添加动画关键帧 */
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* 添加可见时的样式 */
-        .feature-item.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* 添加滚动容器样式 */
-        html {
-            scroll-snap-type: y proximity; /* 改为 proximity 使滚动更自然 */
-            scroll-behavior: smooth;
-        }
-
-        /* 添加深色模式样式 */
+        /* 深色模式样式 */
         body.dark-mode {
-            background: #000;
+            background-color: #1a1a1a;
             color: #fff;
         }
-
-        body.dark-mode .content-wrapper {
-            background: rgba(0, 0, 0, 0.95);
-        }
-
-        body.dark-mode .feature-item {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        body.dark-mode .feature-item h3 {
+        
+        .dark-mode .header,
+        .dark-mode .content {
+            background-color: #2d2d2d;
             color: #fff;
         }
-
-        body.dark-mode .feature-item p {
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-        body.dark-mode .hero h1,
-        body.dark-mode .features h2,
-        body.dark-mode .acknowledgments h3,
-        body.dark-mode .audio-showcase h2 {
+        
+        .dark-mode h1,
+        .dark-mode h2 {
             color: #fff;
+            border-color: #444;
         }
-
-        body.dark-mode .hero p {
-            color: rgba(255, 255, 255, 0.7);
+        
+        .dark-mode .skill {
+            background-color: #333;
         }
-
-        body.dark-mode .acknowledgment-item {
-            background: rgba(255, 255, 255, 0.1);
+        
+        .dark-mode .character-img {
+            background-color: #2d2d2d;
         }
-
-        body.dark-mode .acknowledgment-item .name {
-            color: #fff;
-        }
-
-        body.dark-mode .audio-info {
-            background: rgba(0, 0, 0, 0.9);
-        }
-
-        body.dark-mode .audio-title {
-            color: #fff;
-        }
-
-        /* 修改 GitHub 链接样式 */
-        .github-link {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.6);
-            color: white;
-            width: 44px;
-            height: 44px;
-            padding: 0;
-            border-radius: 50%;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0;
-            transition: all 0.3s ease;
-            z-index: 1;  /* 降低层级，让内容区域可以覆盖它 */
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-sizing: border-box;
+        
+        /* 打字机效果样式 */
+        .typewriter {
             overflow: hidden;
-            opacity: 1;
-            visibility: visible;
-            transition: all 0.3s ease;
-        }
-
-        /* 调整 SVG 图标大小和位置 */
-        .github-link svg {
-            width: 28px;
-            height: 28px;
-            flex-shrink: 0;
-        }
-
-        /* 添加文本样式 */
-        .github-link .github-text {
-            max-width: 0;
-            opacity: 0;
+            border-right: .15em solid #666;
             white-space: nowrap;
-            transition: all 0.3s ease;
-            margin-left: 0;
+            margin: 0;
+            letter-spacing: .15em;
+            animation: blink-caret .75s step-end infinite;
         }
-
-        /* 悬停效果 */
-        .github-link:hover {
-            width: auto;
-            padding: 0 15px;
-            border-radius: 22px;
-            gap: 8px;
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #666 }
         }
-
-        .github-link:hover .github-text {
-            max-width: 200px;
-            opacity: 1;
-            margin-left: 8px;
+        
+        .dark-mode .typewriter {
+            border-right-color: #999;
         }
-
-        /* 深色模式下的样式 */
-        body.dark-mode .scroll-hint {
-            color: rgba(0, 0, 0, 0.9);  /* 深色模式下也保持黑色 */
-            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5);  /* 保持相同的阴影效果 */
-        }
-
-        /* 当滚动到内容区域时隐藏 GitHub 按钮 */
-        .content-wrapper {
-            position: relative;
-            z-index: 2;  /* 确保内容区域在 GitHub 按钮之上 */
-            /* ... 其他样式保持不变 ... */
-        }
-
-        /* 移动端适配 */
-        @media (max-width: 768px) {
-            .feature-grid {
-                grid-template-columns: repeat(2, 1fr);  /* 在移动端显示两列 */
-                gap: 15px;  /* 减小间距 */
-                padding: 0 10px;  /* 添加两侧内边距 */
-            }
-
-            .feature-item {
-                padding: 15px;  /* 减小内边距 */
-            }
-
-            .feature-item h3 {
-                font-size: 16px;  /* 减小标题字体 */
-                margin-bottom: 8px;
-            }
-
-            .feature-item p {
-                font-size: 14px;  /* 减小描述文字字体 */
-            }
-
-            .feature-icon {
-                width: 36px;  /* 减小图标大小 */
-                height: 36px;
-                margin-bottom: 10px;
-            }
-        }
-
-        /* 更小屏幕的适配 */
-        @media (max-width: 480px) {
-            .feature-grid {
-                grid-template-columns: repeat(2, 1fr);  /* 保持两列 */
-                gap: 10px;  /* 进一步减小间距 */
-            }
-
-            .feature-item {
-                padding: 12px;
-            }
-
-            .feature-item h3 {
-                font-size: 14px;
-            }
-
-            .feature-item p {
-                font-size: 12px;
-            }
-
-            .feature-icon {
-                width: 32px;
-                height: 32px;
-                margin-bottom: 8px;
-            }
-        }
-
-        /* 移动端适配 */
-        @media (max-width: 1024px) {
-            .audio-grid {
-                grid-template-columns: repeat(2, 1fr);  /* 平板和手机端都显示两列 */
-                gap: 20px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .audio-grid {
-                grid-template-columns: repeat(1, 1fr);  /* 手机上显示单列 */
-                gap: 15px;
-                padding: 0 15px;
-            }
-
-            .audio-showcase {
-                padding: 40px 15px;  /* 减小内边距 */
-            }
-
-            .audio-showcase h2 {
-                font-size: 2em;  /* 减小标题字体 */
-                margin-bottom: 30px;
-            }
-
-            .audio-info {
-                padding: 12px;  /* 减小内边距 */
-            }
-
-            .audio-title {
-                font-size: 1em;  /* 减小标题字体 */
-            }
-
-            .voice-actor {
-                font-size: 0.85em;  /* 减小配音信息字体 */
-            }
-        }
-
-        /* 修改致谢名单的响应式布局 */
-        @media (max-width: 768px) {
-            .acknowledgments {
-                padding: 40px 15px;  /* 减小内边距 */
-            }
-
-            .acknowledgments h3 {
-                font-size: 1.8em;  /* 减小标题字体 */
-                margin-bottom: 30px;
-            }
-
-            .acknowledgments-list {
-                grid-template-columns: repeat(2, 1fr);  /* 平板和手机端都显示两列 */
-                gap: 12px;
-                padding: 0 15px;
-            }
-
-            .acknowledgment-item {
-                padding: 15px;  /* 减小内边距 */
-                min-height: 100px;  /* 减小最小高度 */
-            }
-
-            .acknowledgment-item .name {
-                font-size: 16px;  /* 减小名字字体 */
-                margin-bottom: 6px;
-            }
-
-            .acknowledgment-item .contribution {
-                font-size: 13px;  /* 减小描述文字字体 */
-                padding: 0 5px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .acknowledgments h3 {
-                font-size: 1.6em;
-            }
-
-            .acknowledgment-item {
-                padding: 12px;
-            }
-
-            .acknowledgment-item .name {
-                font-size: 15px;
-            }
-
-            .acknowledgment-item .contribution {
-                font-size: 12px;
-            }
-
-            /* 优化展开动画 */
-            .acknowledgment-item.expanded {
-                margin-bottom: 10px;  /* 展开时增加底部间距 */
-            }
-
-            @keyframes expandIn {
-                from {
-                    opacity: 0;
-                    transform: translateY(-5px);  /* 减小动画幅度 */
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-        }
-
-        /* 修改音频展示区的响应式布局 */
-        @media (max-width: 1024px) {
-            .audio-grid {
-                grid-template-columns: repeat(2, 1fr);  /* 平板和手机端都显示两列 */
-                gap: 20px;
-                padding: 0 15px;
-            }
-
-            .audio-showcase {
-                padding: 40px 15px;
-            }
-
-            .audio-showcase h2 {
-                font-size: 2em;
-                margin-bottom: 30px;
-            }
-
-            .audio-info {
-                padding: 12px;
-            }
-
-            .audio-title {
-                font-size: 0.9em;
-            }
-
-            .voice-actor {
-                font-size: 0.8em;
-            }
-        }
-
-        /* 删除之前的单列布局代码 */
-        @media (max-width: 480px) {
-            .audio-showcase h2 {
-                font-size: 1.8em;
-            }
-
-            .audio-info {
-                padding: 10px;
-            }
-
-            .audio-title {
-                font-size: 0.85em;
-            }
-
-            .voice-actor {
-                font-size: 0.75em;
-            }
+        
+        .dark-mode @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #999 }
         }
     </style>
 </head>
 <body>
-    <div class="background-layer"></div>
+    <button class="theme-switch" onclick="toggleTheme()">
+        深色
+    </button>
     
-    <div class="clock-container">
-        <div class="clock">
-            <div class="time" id="time">00:00</div>
-            <div class="date" id="date">2024年01月01日</div>
+    <button class="lang-switch" onclick="toggleLanguage()">
+        English
+    </button>
+    
+    <div class="header">
+        <h1>雷军</h1>
+    </div>
+    
+    <div class="nav">
+        <a href="#intro">简介</a>
+        <a href="#career">职业生涯</a>
+        <a href="#achievements">主要成就</a>
+        <a href="#quotes">经典语录</a>
+    </div>
+    
+    <div class="content">
+        <img src="img/leijun.png" class="character-img" alt="雷军" />
+        <div class="section" id="intro">
+            <h2>简介</h2>
+            <p>雷军（1969年12月16日－），中国湖北省仙桃市人，无党派人士，知名企业家、天使投资人。现任小米科技董事长兼CEO，金山软件董事长，武汉大学校董。被媒体誉为"中国苹果"小米的创始人和"互联网手机之父"。</p>
+            <p>1987年，雷军毕业于湖北沔阳中学（现湖北省仙桃中学），考入武汉大学计算机科学系。在校期间，他仅用2年时间就修完了大学毕业所需的全部学分。期间与朋友合作成立黄玫瑰工作室，开发了BITLOK加密软件、免疫90杀毒软件等工具软件，并编撰了《深入DOS编程》和《深入Windows编程》两本书。</p>
         </div>
-    </div>
-    <div class="foreground-layer" id="foreground"></div>
-    <div class="hitokoto" id="hitokoto">生命的意义不仅是活着，而是我们给予生命的意义。</div>
-
-    <div class="scroll-hint">
-        ↓ 向下滑动查看更多
-    </div>
-
-    <div class="content-wrapper">
-        <section class="hero">
-            <h1>一个摆件</h1>
-            <p>优雅的桌面时钟应用，让你的生活更有仪式感</p>
-        </section>
-
-        <section class="features">
-            <h2>主要功能</h2>
-            <div class="feature-grid">
-                <div class="feature-item">
-                    <img src="./assets/icons/wallpaper.svg" alt="背景" class="feature-icon">
-                    <h3>自定义背景</h3>
-                    <p>支持普通壁纸和景深壁纸，让你的桌面更有层次感</p>
-                </div>
-                <div class="feature-item">
-                    <img src="./assets/icons/clock.svg" alt="时钟" class="feature-icon">
-                    <h3>多种时钟样式</h3>
-                    <p>包含极简模式、年度进度和人生进度显示，满足不同场景需求</p>
-                </div>
-                <div class="feature-item">
-                    <img src="./assets/icons/todo.svg" alt="待办" class="feature-icon">
-                    <h3>待办事项</h3>
-                    <p>便捷的待办事项管理，帮助你更好地规划时间</p>
-                </div>
-                <div class="feature-item">
-                    <img src="./assets/icons/quote.svg" alt="一言" class="feature-icon">
-                    <h3>一言功能</h3>
-                    <p>随机展示精选句子，为你的生活增添一份文艺气息</p>
-                </div>
-                <div class="feature-item">
-                    <img src="./assets/icons/music.svg" alt="音乐" class="feature-icon">
-                    <h3>音乐播放</h3>
-                    <p>支持背景音乐播放，打造专属的氛围空间</p>
-                </div>
-                <div class="feature-item">
-                    <img src="./assets/icons/settings.svg" alt="设置" class="feature-icon">
-                    <h3>高度自定义</h3>
-                    <p>可调节模糊效果、文字颜色等，打造专属于你的桌面风格</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="features" style="padding-top: 0;">
-            <h2 style="margin-top: 40px;">未来更新</h2>
-            <div class="feature-grid">
-                <div class="feature-item">
-                    <img src="./assets/icons/weather.svg" alt="天气" class="feature-icon">
-                    <h3>天气获取</h3>
-                    <p>实时显示当前位置天气信息，帮助你合理安排行程</p>
-                </div>
-                <div class="feature-item">
-                    <img src="./assets/icons/location.svg" alt="位置" class="feature-icon">
-                    <h3>地址获取</h3>
-                    <p>显示当前所在地区信息，记录生活的每一个地方</p>
-                </div>
-                <div class="feature-item">
-                    <img src="./assets/icons/steps.svg" alt="步数" class="feature-icon">
-                    <h3>步数显示</h3>
-                    <p>同步显示今日步数，激励你保持运动的好习惯</p>
-                </div>
-                <div class="feature-item">
-                    <img src="./assets/icons/battery.svg" alt="电池" class="feature-icon">
-                    <h3>电池信息</h3>
-                    <p>监控设备电量状态，避免因电量不足影响使用</p>
-                </div>
-                <div class="feature-item">
-                    <img src="./assets/icons/memory.svg" alt="内存" class="feature-icon">
-                    <h3>内存信息</h3>
-                    <p>查看设备内存使用情况，保持系统流畅运行</p>
-                </div>
-                <div class="feature-item">
-                    <img src="./assets/icons/research.svg" alt="研究" class="feature-icon">
-                    <h3>待研究</h3>
-                    <p>更多实用功能正在开发中，敬请期待...</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="download">
-            <h2>立即体验</h2>
-            <p>适用于 Android 设备</p>
-            <div class="download-buttons">
-                <a href="https://www.coolapk.com/apk/com.petehsu.yigebaijian" class="download-btn" style="display: inline-block !important;">
-                    在酷安下载
-                </a>
-                <a href="https://github.com/petehsu/yigebaijian/releases/download/1.0-alpha/default.apk" class="download-btn" style="display: inline-block !important;">
-                    在GitHub下载
-                </a>
-            </div>
-        </section>
-
-        <section class="audio-showcase">
-            <h2>彩蛋配音</h2>
-            <div class="audio-grid">
-                <div class="audio-item">
-                    <button class="download-audio" onclick="showDownloadModal(0)" title="下载音频">
-                        <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M768.2048 856.1664H210.0224C94.208 856.1664 0 755.3024 0 631.296S94.208 406.528 210.0224 406.528c10.5472 0 21.1968 0.9216 31.8464 2.6624 45.7728-122.1632 155.3408-202.5472 279.3472-202.5472 27.648 0 55.0912 4.096 81.6128 12.0832 14.1312 4.3008 21.9136 18.432 17.3056 31.5392-4.608 13.1072-19.7632 20.2752-33.9968 15.9744-21.0944-6.3488-42.9056-9.6256-64.8192-9.6256-107.2128 0-201.728 76.0832-235.2128 189.2352-1.9456 6.656-6.7584 12.1856-13.312 15.4624-6.5536 3.2768-14.2336 3.7888-21.1968 1.6384-13.824-4.3008-27.7504-6.4512-41.472-6.4512-86.1184 0-156.0576 78.4384-156.0576 174.8992s70.0416 174.8992 156.0576 174.8992h558.2848c111.3088 0 201.8304-100.864 201.8304-224.8704 0-124.0064-90.5216-224.8704-201.8304-224.8704-10.752 0-21.9136 1.1264-34.0992 3.4816-14.6432 2.7648-28.7744-5.9392-31.8464-19.456-2.9696-13.5168 6.3488-26.7264 20.992-29.4912 15.872-3.072 30.6176-4.5056 44.9536-4.5056C909.312 306.5856 1024 429.8752 1024 581.3248S909.312 856.1664 768.2048 856.1664z" fill="#f9f3f3"/>
-                            <path d="M997.0688 606.3104c-14.848 0-26.9312-11.1616-26.9312-24.9856 0-124.0064-90.5216-224.8704-201.8304-224.8704s-201.8304 100.864-201.8304 224.8704c0 13.824-12.0832 24.9856-26.9312 24.9856s-26.9312-11.1616-26.9312-24.9856c0-151.552 114.688-274.8416 255.6928-274.8416C909.312 306.5856 1024 429.8752 1024 581.3248c0 13.824-12.0832 24.9856-26.9312 24.9856z" fill="#f9f3f3"/>
-                            <path d="M539.4432 636.3136c-5.2224 0-10.4448-1.4336-15.0528-4.3008l-128.1024-79.872c-12.3904-7.68-15.6672-23.2448-7.2704-34.7136 8.2944-11.4688 24.9856-14.5408 37.376-6.7584l113.0496 70.5536 113.0496-70.5536c12.288-7.68 29.0816-4.7104 37.376 6.7584s5.0176 26.9312-7.2704 34.7136l-128.1024 79.9744c-4.5056 2.7648-9.8304 4.1984-15.0528 4.1984z" fill="#f9f3f3"/>
-                        </svg>
-                    </button>
-                    <div class="audio-player" onclick="toggleAudio(0)">
-                        <img src="./img/1.jpg" alt="旅程的终点">
-                        <div class="play-indicator">▶</div>
-                    </div>
-                        <div class="audio-info">
-                            <div class="audio-title">旅程的终点</div>
-                        <div class="voice-actor">配音人：姚红</div>
-                    </div>
-                </div>
-                <div class="audio-item">
-                    <button class="download-audio" onclick="showDownloadModal(1)" title="下载音频">
-                        <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M768.2048 856.1664H210.0224C94.208 856.1664 0 755.3024 0 631.296S94.208 406.528 210.0224 406.528c10.5472 0 21.1968 0.9216 31.8464 2.6624 45.7728-122.1632 155.3408-202.5472 279.3472-202.5472 27.648 0 55.0912 4.096 81.6128 12.0832 14.1312 4.3008 21.9136 18.432 17.3056 31.5392-4.608 13.1072-19.7632 20.2752-33.9968 15.9744-21.0944-6.3488-42.9056-9.6256-64.8192-9.6256-107.2128 0-201.728 76.0832-235.2128 189.2352-1.9456 6.656-6.7584 12.1856-13.312 15.4624-6.5536 3.2768-14.2336 3.7888-21.1968 1.6384-13.824-4.3008-27.7504-6.4512-41.472-6.4512-86.1184 0-156.0576 78.4384-156.0576 174.8992s70.0416 174.8992 156.0576 174.8992h558.2848c111.3088 0 201.8304-100.864 201.8304-224.8704 0-124.0064-90.5216-224.8704-201.8304-224.8704-10.752 0-21.9136 1.1264-34.0992 3.4816-14.6432 2.7648-28.7744-5.9392-31.8464-19.456-2.9696-13.5168 6.3488-26.7264 20.992-29.4912 15.872-3.072 30.6176-4.5056 44.9536-4.5056C909.312 306.5856 1024 429.8752 1024 581.3248S909.312 856.1664 768.2048 856.1664z" fill="#f9f3f3"/>
-                            <path d="M997.0688 606.3104c-14.848 0-26.9312-11.1616-26.9312-24.9856 0-124.0064-90.5216-224.8704-201.8304-224.8704s-201.8304 100.864-201.8304 224.8704c0 13.824-12.0832 24.9856-26.9312 24.9856s-26.9312-11.1616-26.9312-24.9856c0-151.552 114.688-274.8416 255.6928-274.8416C909.312 306.5856 1024 429.8752 1024 581.3248c0 13.824-12.0832 24.9856-26.9312 24.9856z" fill="#f9f3f3"/>
-                            <path d="M539.4432 636.3136c-5.2224 0-10.4448-1.4336-15.0528-4.3008l-128.1024-79.872c-12.3904-7.68-15.6672-23.2448-7.2704-34.7136 8.2944-11.4688 24.9856-14.5408 37.376-6.7584l113.0496 70.5536 113.0496-70.5536c12.288-7.68 29.0816-4.7104 37.376 6.7584s5.0176 26.9312-7.2704 34.7136l-128.1024 79.9744c-4.5056 2.7648-9.8304 4.1984-15.0528 4.1984z" fill="#f9f3f3"/>
-                        </svg>
-                    </button>
-                    <div class="audio-player" onclick="toggleAudio(1)">
-                        <img src="./img/2.jpg" alt="三天光明">
-                        <div class="play-indicator">▶</div>
-                    </div>
-                        <div class="audio-info">
-                            <div class="audio-title">三天光明</div>
-                        <div class="voice-actor">配音人：谭如意</div>
-                    </div>
-                </div>
-                <div class="audio-item">
-                    <button class="download-audio" onclick="showDownloadModal(2)" title="下载音频">
-                        <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M768.2048 856.1664H210.0224C94.208 856.1664 0 755.3024 0 631.296S94.208 406.528 210.0224 406.528c10.5472 0 21.1968 0.9216 31.8464 2.6624 45.7728-122.1632 155.3408-202.5472 279.3472-202.5472 27.648 0 55.0912 4.096 81.6128 12.0832 14.1312 4.3008 21.9136 18.432 17.3056 31.5392-4.608 13.1072-19.7632 20.2752-33.9968 15.9744-21.0944-6.3488-42.9056-9.6256-64.8192-9.6256-107.2128 0-201.728 76.0832-235.2128 189.2352-1.9456 6.656-6.7584 12.1856-13.312 15.4624-6.5536 3.2768-14.2336 3.7888-21.1968 1.6384-13.824-4.3008-27.7504-6.4512-41.472-6.4512-86.1184 0-156.0576 78.4384-156.0576 174.8992s70.0416 174.8992 156.0576 174.8992h558.2848c111.3088 0 201.8304-100.864 201.8304-224.8704 0-124.0064-90.5216-224.8704-201.8304-224.8704-10.752 0-21.9136 1.1264-34.0992 3.4816-14.6432 2.7648-28.7744-5.9392-31.8464-19.456-2.9696-13.5168 6.3488-26.7264 20.992-29.4912 15.872-3.072 30.6176-4.5056 44.9536-4.5056C909.312 306.5856 1024 429.8752 1024 581.3248S909.312 856.1664 768.2048 856.1664z" fill="#f9f3f3"/>
-                            <path d="M997.0688 606.3104c-14.848 0-26.9312-11.1616-26.9312-24.9856 0-124.0064-90.5216-224.8704-201.8304-224.8704s-201.8304 100.864-201.8304 224.8704c0 13.824-12.0832 24.9856-26.9312 24.9856s-26.9312-11.1616-26.9312-24.9856c0-151.552 114.688-274.8416 255.6928-274.8416C909.312 306.5856 1024 429.8752 1024 581.3248c0 13.824-12.0832 24.9856-26.9312 24.9856z" fill="#f9f3f3"/>
-                            <path d="M539.4432 636.3136c-5.2224 0-10.4448-1.4336-15.0528-4.3008l-128.1024-79.872c-12.3904-7.68-15.6672-23.2448-7.2704-34.7136 8.2944-11.4688 24.9856-14.5408 37.376-6.7584l113.0496 70.5536 113.0496-70.5536c12.288-7.68 29.0816-4.7104 37.376 6.7584s5.0176 26.9312-7.2704 34.7136l-128.1024 79.9744c-4.5056 2.7648-9.8304 4.1984-15.0528 4.1984z" fill="#f9f3f3"/>
-                        </svg>
-                    </button>
-                    <div class="audio-player" onclick="toggleAudio(2)">
-                        <img src="./img/3.jpg" alt="新的岁月">
-                        <div class="play-indicator">▶</div>
-                    </div>
-                        <div class="audio-info">
-                            <div class="audio-title">新的岁月</div>
-                        <div class="voice-actor">配音人：姚红</div>
-                    </div>
-                </div>
-                <div class="audio-item">
-                    <button class="download-audio" onclick="showDownloadModal(3)" title="下载音频">
-                        <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M768.2048 856.1664H210.0224C94.208 856.1664 0 755.3024 0 631.296S94.208 406.528 210.0224 406.528c10.5472 0 21.1968 0.9216 31.8464 2.6624 45.7728-122.1632 155.3408-202.5472 279.3472-202.5472 27.648 0 55.0912 4.096 81.6128 12.0832 14.1312 4.3008 21.9136 18.432 17.3056 31.5392-4.608 13.1072-19.7632 20.2752-33.9968 15.9744-21.0944-6.3488-42.9056-9.6256-64.8192-9.6256-107.2128 0-201.728 76.0832-235.2128 189.2352-1.9456 6.656-6.7584 12.1856-13.312 15.4624-6.5536 3.2768-14.2336 3.7888-21.1968 1.6384-13.824-4.3008-27.7504-6.4512-41.472-6.4512-86.1184 0-156.0576 78.4384-156.0576 174.8992s70.0416 174.8992 156.0576 174.8992h558.2848c111.3088 0 201.8304-100.864 201.8304-224.8704 0-124.0064-90.5216-224.8704-201.8304-224.8704-10.752 0-21.9136 1.1264-34.0992 3.4816-14.6432 2.7648-28.7744-5.9392-31.8464-19.456-2.9696-13.5168 6.3488-26.7264 20.992-29.4912 15.872-3.072 30.6176-4.5056 44.9536-4.5056C909.312 306.5856 1024 429.8752 1024 581.3248S909.312 856.1664 768.2048 856.1664z" fill="#f9f3f3"/>
-                            <path d="M997.0688 606.3104c-14.848 0-26.9312-11.1616-26.9312-24.9856 0-124.0064-90.5216-224.8704-201.8304-224.8704s-201.8304 100.864-201.8304 224.8704c0 13.824-12.0832 24.9856-26.9312 24.9856s-26.9312-11.1616-26.9312-24.9856c0-151.552 114.688-274.8416 255.6928-274.8416C909.312 306.5856 1024 429.8752 1024 581.3248c0 13.824-12.0832 24.9856-26.9312 24.9856z" fill="#f9f3f3"/>
-                            <path d="M539.4432 636.3136c-5.2224 0-10.4448-1.4336-15.0528-4.3008l-128.1024-79.872c-12.3904-7.68-15.6672-23.2448-7.2704-34.7136 8.2944-11.4688 24.9856-14.5408 37.376-6.7584l113.0496 70.5536 113.0496-70.5536c12.288-7.68 29.0816-4.7104 37.376 6.7584s5.0176 26.9312-7.2704 34.7136l-128.1024 79.9744c-4.5056 2.7648-9.8304 4.1984-15.0528 4.1984z" fill="#f9f3f3"/>
-                        </svg>
-                    </button>
-                    <div class="audio-player" onclick="toggleAudio(3)">
-                        <img src="./img/4.jpg" alt="过期的蛋糕">
-                        <div class="play-indicator">▶</div>
-                    </div>
-                        <div class="audio-info">
-                            <div class="audio-title">过期的蛋糕</div>
-                        <div class="voice-actor">配音人：姚红</div>
-                    </div>
-                </div>
-            </div>
-            <audio id="audio-player"></audio>
-        </section>
-
-        <section class="acknowledgments">
-            <h3>致谢名单</h3>
-            <div class="acknowledgments-list">
-                <div class="acknowledgment-item" onclick="toggleDetails(this)">
-                    <span class="name">李铖</span>
-                    <span class="contribution">首席测试：酷安@发旧的情书，提了些没什么参考价值的建议，比如加入一键启动原神</span>
-                </div>
-
-                <div class="acknowledgment-item" onclick="toggleDetails(this)">
-                    <span class="name">谭如意</span>
-                    <span class="contribution">彩蛋配音：重庆幼儿师范高等专科学校在读学生<br>《三天光明》和数个未使用到软件的音频</span>
-                </div>
-
-                <div class="acknowledgment-item" onclick="toggleDetails(this)">
-                    <span class="name">姚红</span>
-                    <span class="contribution">彩蛋配音：《过期的蛋糕》《旅程的终点》《新的岁月》</span>
-                </div>
-
-                <div class="acknowledgment-item" onclick="toggleDetails(this)">
-                    <span class="name">Pexels@Simon Migaj</span>
-                    <span class="contribution">默认壁纸：「Person Standing on Slope Glacier Mountain」</span>
-                </div>
-
-                <div class="acknowledgment-item" onclick="toggleDetails(this)">
-                    <span class="name">职高好友肖杭</span>
-                    <span class="contribution">友情串客</span>
-                </div>
-            </div>
-        </section>
-
-        <footer>
-            <div class="footer-content">
-                <p>开发者：徐远豪 | © 2024 一个摆件</p>
-                <span class="contact-links">
-                    <a href="http://www.coolapk.com/u/6717911" target="_blank">CoolApk</a> |
-                    <a href="mailto:qingjiaowoxuzhong@foxmail.com">Foxmail</a> |
-                    <a href="mailto:x13102306563@gmail.com">Gmail</a> |
-                    <a href="https://x.com/Qxuzhong?t=wInWSfBE7xygogD8Z5Ax7Q&s=09" target="_blank">X</a> |
-                    <a href="https://www.facebook.com/share/19qfu2obZv/" target="_blank">Facebook</a> |
-                    <a href="https://t.me/PeteHsu" target="_blank">Telegram</a> |
-                    <a href="https://www.instagram.com/xyh20050806?igsh=MTEwdDQwaGdmeHFhdw==" target="_blank">Instagram</a> |
-                    <a href="javascript:void(0)" onclick="showWechatModal()">WeChat</a>
-                </span>
-                <br>
-                <span class="contact-links">
-                    <a href="javascript:void(0)" onclick="showQQGroupModal()">QQ社群</a> |
-                    <a href="javascript:void(0)" onclick="showWeChatGroupModal()">WeChat社区</a> |
-                    <a href="javascript:void(0)" onclick="showTelegramGroupModal()">Telegram社群</a>
-                </span>
-            </p>
+        
+        <div class="section" id="career">
+            <h2>职业生涯</h2>
+            <p>1991年毕业后来到北京，就职于北京遥测技术研究所。同年底结识求伯君，1992年初在金山软件的珠海研发部实习，7月正式加入金山软件。他从一名程序员做起，逐步晋升，1998年出任金山软件CEO。</p>
+            <p>2007年，他带领金山在香港成功上市后卸任CEO。2010年4月6日，雷军与林斌等人共同创办小米科技公司。在他的带领下，小米从一家初创企业发展成为世界500强企业、全球第三大智能手机供应商，并建成了全球最大消费类IoT物联网平台。</p>
+            <p>2019年，小米成为世界500强企业之一，同时也是其中最年轻的公司。2023年11月29日，雷军向母校武汉大学捐赠13亿元现金，创中国高校单笔个人现金捐赠纪录。</p>
         </div>
-    </footer>
-    </div>
-
-    <!-- 下载确认弹窗 -->
-    <div class="modal" id="downloadModal">
-        <div class="modal-content">
-            <h3 class="modal-title">下载须知</h3>
-            <p class="modal-text">
-                请注意：<br>
-                1. 本音频作品仅供个人欣赏使用<br>
-                2. 严禁用于商业用途<br>
-                3. 禁止在未经授权的情况下进行二次创作或传播<br>
-                4. 音频版权归原作者所有
-            </p>
-            <div class="agreement-checkbox">
-                <input type="checkbox" id="agreementCheckbox">
-                <label for="agreementCheckbox">我已阅读并同意上述条款</label>
-            </div>
-            <div class="modal-buttons">
-                <button class="modal-button cancel-button" onclick="closeDownloadModal()">取消</button>
-                <button class="modal-button download-button" id="confirmDownload" disabled>下载</button>
+        
+        <div class="section" id="achievements">
+            <h2>主要成就</h2>
+            <ul>
+                <li>金山软件董事长</li>
+                <li>小米集团创始人、董事长兼CEO</li>
+                <li>第十二、十三届全国人民代表大会代表</li>
+                <li>第十二届中华全国工商业联合会副主席</li>
+                <li>武汉大学名誉教授、校董</li>
+                <li>2015年入选《时代周刊》"百位最具影响力人物"</li>
+                <li>2019年获"优秀中国特色社会主义事业建设者"称号</li>
+                <li>2019年以96亿美元财富排名福布斯全球亿万富豪榜第143位</li>
+                <li>2021年以230亿美元财富位列《福布斯全球富豪榜》第75名</li>
+            </ul>
+        </div>
+        
+        <div class="section" id="quotes">
+            <h2>经典语录</h2>
+            <div class="skill">
+                <p class="typewriter"></p>
+                <p class="typewriter"></p>
+                <p class="typewriter"></p>
+                <p class="typewriter"></p>
             </div>
         </div>
     </div>
-
-    <!-- 左侧夜间模式按钮 -->
-    <div class="floating-buttons left-buttons">
-        <button class="floating-button" id="darkModeToggle" title="切换夜间模式">
-            <svg viewBox="0 0 24 24">
-                <path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-3.03 0-5.5-2.47-5.5-5.5 0-1.82.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/>
-            </svg>
-        </button>
-    </div>
-
-    <!-- 右侧语言切换按钮 -->
-    <div class="floating-buttons right-buttons">
-        <button class="floating-button" id="languageToggle" title="Switch Language" onclick="toggleLanguage()">
-            <svg viewBox="0 0 24 24">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-            </svg>
-        </button>
-    </div>
-
-    <!-- GitHub 链接 -->
-    <a href="https://github.com/petehsu/yigebaijian" class="github-link" target="_blank">
-            <svg viewBox="0 0 24 24" width="24" height="24">
-                <path fill="currentColor" d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
-            </svg>
-        <span class="github-text">访问GitHub项目</span>
-    </a>
-
-    <!-- 添加WeChat二维码弹窗 -->
-    <div id="wechatModal" class="modal wechat-modal">
-        <div class="modal-content wechat-modal-content" style="text-align: center; padding: 20px;">
-            <img src="./img/wx.png" alt="WeChat QR Code" style="max-width: 200px; width: 100%;">
-            <p style="margin-top: 10px;">扫描二维码添加微信</p>
-            <button class="modal-button cancel-button" onclick="closeWechatModal()" style="margin-top: 15px;">关闭</button>
-        </div>
-    </div>
-
-    <!-- QQ社群弹窗 -->
-    <div id="qqGroupModal" class="modal wechat-modal">
-        <div class="modal-content wechat-modal-content" style="text-align: center; padding: 20px;">
-            <img src="./img/qqq.png" alt="QQ Group QR Code" style="max-width: 200px; width: 100%;">
-            <p style="margin-top: 10px;">扫描二维码加入QQ社群</p>
-            <button class="modal-button cancel-button" onclick="closeQQGroupModal()" style="margin-top: 15px;">关闭</button>
-        </div>
-    </div>
-
-    <!-- WeChat社区弹窗 -->
-    <div id="wechatGroupModal" class="modal wechat-modal">
-        <div class="modal-content wechat-modal-content" style="text-align: center; padding: 20px;">
-            <img src="./img/wxq.png" alt="WeChat Group QR Code" style="max-width: 200px; width: 100%;">
-            <p style="margin-top: 10px;">扫描二维码加入WeChat社区</p>
-            <button class="modal-button cancel-button" onclick="closeWeChatGroupModal()" style="margin-top: 15px;">关闭</button>
-        </div>
-    </div>
-
-    <!-- Telegram社群弹窗 -->
-    <div id="telegramGroupModal" class="modal wechat-modal">
-        <div class="modal-content wechat-modal-content" style="text-align: center; padding: 20px;">
-            <img src="./img/telegramq.png" alt="Telegram Group QR Code" style="max-width: 200px; width: 100%;">
-            <p style="margin-top: 10px;">扫描二维码加入Telegram社群</p>
-            <button class="modal-button cancel-button" onclick="closeTelegramGroupModal()" style="margin-top: 15px;">关闭</button>
-        </div>
-    </div>
-
+    
     <script>
-        // 添加语言切换相关变量和函数
-        let currentLang = 'zh'; // 默认语言为中文
-
-        // 添加语言切换函数
-        function toggleLanguage() {
-            currentLang = currentLang === 'zh' ? 'en' : 'zh';
-            localStorage.setItem('language', currentLang);
-            updateLanguage();
-        }
-
-        // 扩展翻译配置,添加缺失的翻译项
-        const translations = {
-            zh: {
-                // 标题和描述
-                title: "一个摆件",
-                subtitle: "优雅的桌面时钟应用，让你的生活更有仪式感",
-                
-                // 功能区域
-                features: "主要功能",
-                futureUpdates: "未来更新",
-                
-                // 下载区域
-                downloadNow: "立即体验",
-                forAndroid: "适用于 Android 设备",
-                downloadOnCoolApk: "在酷安下载",
-                downloadOnGithub: "在GitHub下载",
-                
-                // 音频展示区
-                audioShowcase: "彩蛋配音",
-                voiceActorPrefix: "配音人：",
-                
-                // 致谢区域
-                acknowledgments: "致谢名单",
-                
-                // 下载须知
-                downloadNotice: {
-                    title: "下载须知",
-                    audioInfo: "音频信息：",
-                    workName: "作品名称：",
-                    voiceActor: "配音：",
-                    postProduction: "后期：",
-                    usageNotice: "使用须知：",
-                    terms: [
-                        "本音频作品仅供个人欣赏使用",
-                        "严禁用于商业用途",
-                        "禁止在未经授权的情况下进行二次创作或传播",
-                        "音频版权归原作者所有"
-                    ],
-                    agree: "我已阅读并同意上述条款",
-                    cancel: "取消",
-                    download: "下载",
-                    producer: "酷安@请叫我徐总"  // 修改为中文显示
-                },
-                
-                // 按钮和提示
-                darkMode: "切换夜间模式",
-                scrollHint: "↓ 向下滑动查看更多",
-                
-                // 功能区域详细内容
-                features_items: {
-                    customBg: {
-                        title: "自定义背景",
-                        desc: "支持普通壁纸和景深壁纸，让你的桌面更有层次感"
-                    },
-                    clock: {
-                        title: "多种时钟样式",
-                        desc: "包含极简模式、年度进度和人生进度显示，满足不同场景需求"
-                    },
-                    todo: {
-                        title: "待办事项",
-                        desc: "便捷的待办事项管理，帮助你更好地规划时间"
-                    },
-                    hitokoto: {
-                        title: "一言功能",
-                        desc: "随机展示精选句子，为你的生活增添一份文艺气息"
-                    },
-                    music: {
-                        title: "音乐播放",
-                        desc: "支持背景音乐播放，打造专属的氛围空间"
-                    },
-                    custom: {
-                        title: "高度自定义",
-                        desc: "可调节模糊效果、文字颜色等，打造专属于你的桌面风格"
-                    }
-                },
-                
-                // 未来更新详细内容
-                future_items: {
-                    weather: {
-                        title: "天气获取",
-                        desc: "实时显示当前位置天气信息，帮助你合理安排行程"
-                    },
-                    location: {
-                        title: "地址获取",
-                        desc: "显示当前所在地区信息，记录生活的每一个地方"
-                    },
-                    steps: {
-                        title: "步数显示",
-                        desc: "同步显示今日步数，激励你保持运动的好习惯"
-                    },
-                    battery: {
-                        title: "电池信息",
-                        desc: "监控设备电量状态，避免因电量不足影响使用"
-                    },
-                    memory: {
-                        title: "内存信息",
-                        desc: "查看设备内存使用情况，保持系统流畅运行"
-                    },
-                    research: {
-                        title: "待研究",
-                        desc: "更多实用功能正在开发中，敬请期待..."
-                    }
-                },
-                
-                // 社群相关
-                community: {
-                    wechat: {
-                        title: "扫描二维码添加微信",
-                        close: "关闭"
-                    },
-                    qq: {
-                        title: "扫描二维码加入QQ社群",
-                        close: "关闭"
-                    },
-                    wechatGroup: {
-                        title: "扫描二维码加入WeChat社区",
-                        close: "关闭"
-                    },
-                    telegram: {
-                        title: "扫描二维码加入Telegram社群",
-                        close: "关闭"
-                    }
-                },
-                
-                // 页脚
-                footer: {
-                    developer: "开发者：徐远豪",
-                    copyright: "© 2024 一个摆件",
-                    contact: "联系方式"
-                },
-
-                // 致谢名单详细内容
-                acknowledgment_items: {
-                    tester: {
-                        name: "李铖",
-                        contribution: "首席测试：酷安@发旧的情书，提了些没什么参考价值的建议，比如加入一键启动原神"
-                    },
-                    voiceActor1: {
-                        name: "谭如意",
-                        contribution: "彩蛋配音：重庆幼儿师范高等专科学校在读学生\n《三天光明》和数个未使用到软件的音频"
-                    },
-                    voiceActor2: {
-                        name: "姚红",
-                        contribution: "彩蛋配音：《过期的蛋糕》《旅程的终点》《新的岁月》"
-                    },
-                    wallpaper: {
-                        name: "Pexels@Simon Migaj",
-                        contribution: "默认壁纸：「Person Standing on Slope Glacier Mountain」"
-                    },
-                    friend: {
-                        name: "职高好友肖杭",
-                        contribution: "友情串客"
-                    }
-                },
-
-                // 社群链接
-                social_links: {
-                    coolApk: "CoolApk",  // 改为英文
-                    foxmail: "Foxmail",
-                    gmail: "Gmail",
-                    facebook: "Facebook", 
-                    telegram: "Telegram",
-                    instagram: "Instagram",
-                    wechat: "WeChat",    // 改为英文
-                    qqGroup: "QQ社群",
-                    wechatGroup: "WeChat社区",
-                    telegramGroup: "Telegram社群"
-                },
-
-                // 音频相关
-                audio_items: {
-                    journey: {
-                        title: "旅程的终点",
-                        artist: "姚红"
-                    },
-                    light: {
-                        title: "三天光明",
-                        artist: "谭如意"
-                    },
-                    years: {
-                        title: "新的岁月",
-                        artist: "姚红"
-                    },
-                    cake: {
-                        title: "过期的蛋糕",
-                        artist: "姚红"
-                    }
-                },
-
-                // 在 translations 中添加 GitHub 链接文本的翻译
-                github: {
-                    text: "访问GitHub项目"
-                }
-            },
-            en: {
-                title: "A Decoration",
-                subtitle: "An elegant desktop clock application that adds ceremony to your life",
-                
-                features: "Main Features",
-                futureUpdates: "Future Updates",
-                
-                downloadNow: "Try Now",
-                forAndroid: "For Android Devices",
-                downloadOnCoolApk: "Download on CoolApk",
-                downloadOnGithub: "Download on GitHub",
-                
-                audioShowcase: "Voice Easter Eggs",
-                voiceActorPrefix: "Voice Actor: ",
-                
-                acknowledgments: "Acknowledgments",
-                
-                downloadNotice: {
-                    title: "Download Notice",
-                    audioInfo: "Audio Information:",
-                    workName: "Work Name:",
-                    voiceActor: "Voice Actor:",
-                    postProduction: "Post Production:",
-                    usageNotice: "Terms of Use:",
-                    terms: [
-                        "This audio work is for personal enjoyment only",
-                        "Commercial use is prohibited",
-                        "Unauthorized reproduction or distribution is prohibited",
-                        "Audio copyright belongs to the original author"
-                    ],
-                    agree: "I have read and agree to the terms above",
-                    cancel: "Cancel",
-                    download: "Download",
-                    producer: "CoolApk@PeteHsu"  // 英文显示保持不变
-                },
-                
-                darkMode: "Toggle Dark Mode",
-                scrollHint: "↓ Scroll down for more",
-                
-                // 功能区域详细内容
-                features_items: {
-                    customBg: {
-                        title: "Custom Background",
-                        desc: "Support for regular and depth wallpapers, adding layers to your desktop"
-                    },
-                    clock: {
-                        title: "Multiple Clock Styles",
-                        desc: "Including minimalist mode, yearly and life progress display for different scenarios"
-                    },
-                    todo: {
-                        title: "To-Do List",
-                        desc: "Convenient task management to help you better plan your time"
-                    },
-                    hitokoto: {
-                        title: "Daily Quotes",
-                        desc: "Random selected quotes to add literary atmosphere to your life"
-                    },
-                    music: {
-                        title: "Music Player",
-                        desc: "Background music support to create your personal ambiance"
-                    },
-                    custom: {
-                        title: "High Customization",
-                        desc: "Adjust blur effects, text colors, and more to create your unique desktop style"
-                    }
-                },
-                
-                // 未来更新详细内容
-                future_items: {
-                    weather: {
-                        title: "Weather Info",
-                        desc: "Real-time local weather display to help plan your schedule"
-                    },
-                    location: {
-                        title: "Location Info",
-                        desc: "Show current location information, recording every place in your life"
-                    },
-                    steps: {
-                        title: "Step Counter",
-                        desc: "Sync daily steps to encourage maintaining exercise habits"
-                    },
-                    battery: {
-                        title: "Battery Info",
-                        desc: "Monitor device battery status to prevent low power issues"
-                    },
-                    memory: {
-                        title: "Memory Info",
-                        desc: "Check device memory usage to maintain smooth operation"
-                    },
-                    research: {
-                        title: "In Research",
-                        desc: "More useful features are under development, stay tuned..."
-                    }
-                },
-                
-                // 社群相关
-                community: {
-                    wechat: {
-                        title: "Scan QR Code to Add WeChat",
-                        close: "Close"
-                    },
-                    qq: {
-                        title: "Scan QR Code to Join QQ Group",
-                        close: "Close"
-                    },
-                    wechatGroup: {
-                        title: "Scan QR Code to Join WeChat Community",
-                        close: "Close"
-                    },
-                    telegram: {
-                        title: "Scan QR Code to Join Telegram Group",
-                        close: "Close"
-                    }
-                },
-                
-                // 页脚
-                footer: {
-                    developer: "Developer: Pete Hsu",
-                    copyright: "© 2024 A Decoration",
-                    contact: "Contact"
-                },
-
-                // 致谢名单详细内容
-                acknowledgment_items: {
-                    tester: {
-                        name: "Li Cheng",
-                        contribution: "Chief Tester: CoolApk@OldLoveLetter, provided some not-so-useful suggestions, like adding one-click Genshin Impact launch"
-                    },
-                    voiceActor1: {
-                        name: "Reese Tan",
-                        contribution: "Voice Actor: Student at Chongqing Preschool Education College\nVoiced 'Three Days of Light' and several unused audio clips"
-                    },
-                    voiceActor2: {
-                        name: "Hannah Yao",
-                        contribution: "Voice Actor: Voiced 'Expired Cake', 'End of Journey', and 'New Years'"
-                    },
-                    wallpaper: {
-                        name: "Pexels@Simon Migaj",
-                        contribution: "Default Wallpaper: 'Person Standing on Slope Glacier Mountain'"
-                    },
-                    friend: {
-                        name: "Xiao Hang",
-                        contribution: "Special Guest"
-                    }
-                },
-
-                // 社群链接
-                social_links: {
-                    coolApk: "CoolApk",
-                    foxmail: "Foxmail",
-                    gmail: "Gmail",
-                    facebook: "Facebook",
-                    telegram: "Telegram", 
-                    instagram: "Instagram",
-                    wechat: "WeChat",
-                    qqGroup: "QQ Community",
-                    wechatGroup: "WeChat Community",
-                    telegramGroup: "Telegram Group"
-                },
-
-                // 音频相关
-                audio_items: {
-                    journey: {
-                        title: "End of Journey",
-                        artist: "Hannah Yao"
-                    },
-                    light: {
-                        title: "Three Days of Light",
-                        artist: "Reese Tan"
-                    },
-                    years: {
-                        title: "New Years",
-                        artist: "Hannah Yao"
-                    },
-                    cake: {
-                        title: "Expired Cake",
-                        artist: "Hannah Yao"
-                    }
-                },
-
-                // 在 translations 中添加 GitHub 链接文本的翻译
-                github: {
-                    text: "Visit GitHub Project"
-                }
-            }
-        };
-
-        // 在 updateLanguage 函数中添加新的更新逻辑
-        function updateLanguage() {
-            const t = translations[currentLang];
+        // 深色模式切换
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const button = document.querySelector('.theme-switch');
+            const isEnglish = document.querySelector('.lang-switch').textContent === 'Chinese';
             
-            try {
-                // 更新标题和描述
-                document.querySelector('.hero h1').textContent = t.title;
-                document.querySelector('.hero p').textContent = t.subtitle;
-                
-                // 更新功能区域标题
-                document.querySelectorAll('.features h2')[0].textContent = t.features;
-                document.querySelectorAll('.features h2')[1].textContent = t.futureUpdates;
-                
-                // 更新下载区域
-                document.querySelector('.download h2').textContent = t.downloadNow;
-                document.querySelector('.download p').textContent = t.forAndroid;
-                document.querySelectorAll('.download-btn')[0].textContent = t.downloadOnCoolApk;
-                document.querySelectorAll('.download-btn')[1].textContent = t.downloadOnGithub;
-                
-                // 更新音频展示区
-                document.querySelector('.audio-showcase h2').textContent = t.audioShowcase;
-                
-                // 更新致谢区域
-                document.querySelector('.acknowledgments h3').textContent = t.acknowledgments;
-                
-                // 更新下载须知模态框
-                document.querySelector('.modal-title').textContent = t.downloadNotice.title;
-                document.querySelector('.modal-text').innerHTML = `
-                    ${t.downloadNotice.audioInfo}<br>
-                    ${t.downloadNotice.workName}${t.audio_items.journey.title}<br>
-                    ${t.downloadNotice.voiceActor}${t.audio_items.journey.artist}<br>
-                    ${t.downloadNotice.postProduction}${t.downloadNotice.producer}<br>
-                    <br>
-                    ${t.downloadNotice.usageNotice}<br>
-                    1. ${t.downloadNotice.terms[0]}<br>
-                    2. ${t.downloadNotice.terms[1]}<br>
-                    3. ${t.downloadNotice.terms[2]}<br>
-                    4. ${t.downloadNotice.terms[3]}
-                `;
-                document.querySelector('.agreement-checkbox label').textContent = t.downloadNotice.agree;
-                document.querySelector('.cancel-button').textContent = t.downloadNotice.cancel;
-                document.querySelector('.download-button').textContent = t.downloadNotice.download;
-                
-                // 更新按钮提示文本
-                document.getElementById('darkModeToggle').title = t.darkMode;
-                document.querySelector('.scroll-hint').textContent = t.scrollHint;
-
-                // 更新配音信息
-                updateVoiceActors();
-
-                // 更新功能区域详细内容
-                const featureItems = document.querySelectorAll('.feature-item');
-                featureItems.forEach((item, index) => {
-                    const key = Object.keys(t.features_items)[index];
-                    if (t.features_items[key]) {
-                        item.querySelector('h3').textContent = t.features_items[key].title;
-                        item.querySelector('p').textContent = t.features_items[key].desc;
-                    }
-                });
-                
-                // 更新未来更新详细内容
-                const futureItems = document.querySelectorAll('.feature-item');
-                const futureStartIndex = 6; // 前6个是现有功能
-                futureItems.forEach((item, index) => {
-                    if (index >= futureStartIndex) {
-                        const key = Object.keys(t.future_items)[index - futureStartIndex];
-                        if (t.future_items[key]) {
-                            item.querySelector('h3').textContent = t.future_items[key].title;
-                            item.querySelector('p').textContent = t.future_items[key].desc;
-                        }
-                    }
-                });
-                
-                // 更新社群弹窗内容
-                document.querySelector('#wechatModal p').textContent = t.community.wechat.title;
-                document.querySelector('#wechatModal .cancel-button').textContent = t.community.wechat.close;
-                
-                document.querySelector('#qqGroupModal p').textContent = t.community.qq.title;
-                document.querySelector('#qqGroupModal .cancel-button').textContent = t.community.qq.close;
-                
-                document.querySelector('#wechatGroupModal p').textContent = t.community.wechatGroup.title;
-                document.querySelector('#wechatGroupModal .cancel-button').textContent = t.community.wechatGroup.close;
-                
-                document.querySelector('#telegramGroupModal p').textContent = t.community.telegram.title;
-                document.querySelector('#telegramGroupModal .cancel-button').textContent = t.community.telegram.close;
-                
-                // 更新页脚内容
-                const footerContent = document.querySelector('.footer-content');
-                if (footerContent) {
-                    footerContent.querySelector('p').innerHTML = `${t.footer.developer} | ${t.footer.copyright}`;
-                }
-                
-                // 更新致谢名单详细内容
-                const acknowledgmentItems = document.querySelectorAll('.acknowledgment-item');
-                acknowledgmentItems.forEach((item, index) => {
-                    const key = Object.keys(t.acknowledgment_items)[index];
-                    if (t.acknowledgment_items[key]) {
-                        item.querySelector('.name').textContent = t.acknowledgment_items[key].name;
-                        item.querySelector('.contribution').textContent = t.acknowledgment_items[key].contribution;
-                    }
-                });
-
-                // 更新社群链接文本
-                const contactLinks = document.querySelectorAll('.contact-links a');
-                contactLinks.forEach(link => {
-                    // 获取链接的 onclick 属性值
-                    const onclickValue = link.getAttribute('onclick');
-                    if (onclickValue) {
-                        if (onclickValue.includes('showQQGroupModal')) {
-                            link.textContent = t.social_links.qqGroup;
-                        } else if (onclickValue.includes('showWeChatGroupModal')) {
-                            link.textContent = t.social_links.wechatGroup;
-                        } else if (onclickValue.includes('showTelegramGroupModal')) {
-                            link.textContent = t.social_links.telegramGroup;
-                        } else if (onclickValue.includes('showWechatModal')) {
-                            link.textContent = t.social_links.wechat;
-                        }
-                    } else {
-                        // 处理其他社交链接
-                        const href = link.getAttribute('href');
-                        if (href) {
-                            if (href.includes('coolapk')) {
-                                link.textContent = t.social_links.coolApk;
-                            } else if (href.includes('foxmail')) {
-                                link.textContent = t.social_links.foxmail;
-                            } else if (href.includes('gmail')) {
-                                link.textContent = t.social_links.gmail;
-                            } else if (href.includes('facebook')) {
-                                link.textContent = t.social_links.facebook;
-                            } else if (href.includes('telegram') && !onclickValue) {
-                                link.textContent = t.social_links.telegram;
-                            } else if (href.includes('instagram')) {
-                                link.textContent = t.social_links.instagram;
-                            }
-                        }
-                    }
-                });
-
-                // 更新音频标题和配音信息
-                const audioItems = document.querySelectorAll('.audio-item');
-                audioItems.forEach((item, index) => {
-                    const key = Object.keys(t.audio_items)[index];
-                    if (t.audio_items[key]) {
-                        item.querySelector('.audio-title').textContent = t.audio_items[key].title;
-                        item.querySelector('.voice-actor').textContent = 
-                            `${t.voiceActorPrefix}${t.audio_items[key].artist}`;
-                    }
-                });
-
-                // 更新 GitHub 链接文本
-                const githubText = document.querySelector('.github-link .github-text');
-                if (githubText) {
-                    githubText.textContent = t.github.text;
-                }
-
-            } catch (error) {
-                console.error('更新语言时出错:', error);
-            }
-        }
-
-        // 在页面加载时初始化语言设置
-        document.addEventListener('DOMContentLoaded', function() {
-            // 检查是否有保存的语言设置
-            const savedLang = localStorage.getItem('language');
-            if (savedLang) {
-                currentLang = savedLang;
-            }
-            
-            // 初始化语言
-            updateLanguage();
-
-            // 添加语言切换按钮事件监听
-            const langToggle = document.querySelector('.lang-toggle');
-            if (langToggle) {
-                langToggle.addEventListener('click', toggleLanguage);
-            }
-        });
-
-        // 1. 在脚本开始处声明 audioPlayer 变量
-        let audioPlayer = null;
-
-        // 2. 修改音频相关的事件监听代码
-        document.addEventListener('DOMContentLoaded', function() {
-            // 初始化 audioPlayer
-            audioPlayer = document.getElementById('audio-player');
-            
-            // 只有在 audioPlayer 存在时才添加事件监听
-            if (audioPlayer) {
-                audioPlayer.addEventListener('loadstart', () => {
-                    console.log('开始加载音频...');
-                });
-
-                audioPlayer.addEventListener('loadeddata', () => {
-                    console.log('音频加载完成');
-                });
-            }
-
-            // 3. 修改 WeChat 相关的事件监听代码
-            const wechatModal = document.getElementById('wechatModal');
-            const wechatLink = document.getElementById('wechatLink');
-
-            if (wechatLink) {
-            wechatLink.addEventListener('click', function(e) {
-                e.preventDefault();
-                showWechatModal();
-            });
-            }
-
-            if (wechatModal) {
-            wechatModal.addEventListener('click', function(e) {
-                if (e.target === wechatModal) {
-                    closeWechatModal();
-                }
-            });
-            }
-
-            // 4. 修改语言更新相关代码
-            const savedLang = localStorage.getItem('language');
-            if (savedLang) {
-                currentLang = savedLang;
-            }
-
-            try {
-                updateLanguage();
-            } catch (error) {
-                console.error('更新语言时出错:', error);
-            }
-
-            // 添加社群链接的点击事件监听
-            const qqGroupLink = document.querySelector('a[onclick="showQQGroupModal()"]');
-            if (qqGroupLink) {
-                qqGroupLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    showQQGroupModal();
-                });
-            }
-
-            const wechatGroupLink = document.querySelector('a[onclick="showWeChatGroupModal()"]');
-            if (wechatGroupLink) {
-                wechatGroupLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    showWeChatGroupModal();
-                });
-            }
-
-            const telegramGroupLink = document.querySelector('a[onclick="showTelegramGroupModal()"]');
-            if (telegramGroupLink) {
-                telegramGroupLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    showTelegramGroupModal();
-                });
-            }
-
-            // 添加模态框点击外部关闭功能
-            const modals = document.querySelectorAll('.modal');
-            modals.forEach(modal => {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        this.style.display = 'none';
-                    }
-                });
-            });
-        });
-
-        // 6. 确保所有事件处理函数都已定义
-        function showWechatModal() {
-            const modal = document.getElementById('wechatModal');
-            if (modal) {
-                modal.style.display = 'flex';
-            }
-        }
-
-        function closeWechatModal() {
-            const modal = document.getElementById('wechatModal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        }
-
-        // 其他代码保持不变...
-
-        // 3. 修复社群链接的点击事件处理
-        function showQQGroupModal() {
-            const modal = document.getElementById('qqGroupModal');
-            if (modal) {
-                modal.style.display = 'flex';
-            }
-        }
-
-        function closeQQGroupModal() {
-            const modal = document.getElementById('qqGroupModal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        }
-
-        function showWeChatGroupModal() {
-            const modal = document.getElementById('wechatGroupModal');
-            if (modal) {
-                modal.style.display = 'flex';
-            }
-        }
-
-        function closeWeChatGroupModal() {
-            const modal = document.getElementById('wechatGroupModal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        }
-
-        function showTelegramGroupModal() {
-            const modal = document.getElementById('telegramGroupModal');
-            if (modal) {
-                modal.style.display = 'flex';
-            }
-        }
-
-        function closeTelegramGroupModal() {
-            const modal = document.getElementById('telegramGroupModal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-        }
-
-        // 添加下载相关函数
-        function showDownloadModal(index) {
-            currentDownloadIndex = index;
-            const modal = document.getElementById('downloadModal');
-            const checkbox = document.getElementById('agreementCheckbox');
-            const downloadButton = document.getElementById('confirmDownload');
-            
-            if (modal) {
-                modal.style.display = 'flex';
-                checkbox.checked = false;
-                downloadButton.disabled = true;
-                
-                const t = translations[currentLang];
-                const audioItem = t.audio_items[Object.keys(t.audio_items)[index]];
-                
-                // 更新模态框内容
-                document.querySelector('.modal-title').textContent = t.downloadNotice.title;
-                document.querySelector('.modal-text').innerHTML = `
-                    ${t.downloadNotice.audioInfo}<br>
-                    ${t.downloadNotice.workName}${audioItem.title}<br>
-                    ${t.downloadNotice.voiceActor}${audioItem.artist}<br>
-                    ${t.downloadNotice.postProduction}${t.downloadNotice.producer}<br>
-                    <br>
-                    ${t.downloadNotice.usageNotice}<br>
-                    1. ${t.downloadNotice.terms[0]}<br>
-                    2. ${t.downloadNotice.terms[1]}<br>
-                    3. ${t.downloadNotice.terms[2]}<br>
-                    4. ${t.downloadNotice.terms[3]}
-                `;
-                
-                // 更新复选框和按钮文本
-                document.querySelector('.agreement-checkbox label').textContent = t.downloadNotice.agree;
-                document.querySelector('.cancel-button').textContent = t.downloadNotice.cancel;
-                document.querySelector('.download-button').textContent = t.downloadNotice.download;
-            }
-        }
-
-        function closeDownloadModal() {
-            const modal = document.getElementById('downloadModal');
-            if (modal) {
-                modal.style.display = 'none';
-                currentDownloadIndex = null;
-            }
-        }
-
-        // 添加复选框事件监听
-        document.addEventListener('DOMContentLoaded', function() {
-            const checkbox = document.getElementById('agreementCheckbox');
-            const downloadButton = document.getElementById('confirmDownload');
-            
-            if (checkbox && downloadButton) {
-                checkbox.addEventListener('change', function() {
-                    downloadButton.disabled = !this.checked;
-                });
-            }
-
-            // 添加下载按钮点击事件
-            if (downloadButton) {
-                downloadButton.addEventListener('click', function() {
-                    if (currentDownloadIndex !== null && checkbox.checked) {
-                        try {
-                            const xhr = new XMLHttpRequest();
-                            xhr.open('GET', audioFiles[currentDownloadIndex], true);
-                            xhr.responseType = 'blob';
-
-                            xhr.onload = function() {
-                                if (xhr.status === 200) {
-                                    const blob = new Blob([xhr.response], { type: 'audio/mpeg' });
-                                    const url = window.URL.createObjectURL(blob);
-                                    const link = document.createElement('a');
-                                    link.href = url;
-                                    link.download = audioFiles[currentDownloadIndex].split('/').pop();
-                                    document.body.appendChild(link);
-                                    link.click();
-                                    window.URL.revokeObjectURL(url);
-                                    document.body.removeChild(link);
-                                    closeDownloadModal();
-                                }
-                            };
-
-                            xhr.onerror = function() {
-                                console.error('下载失败');
-                                alert('下载失败，请重试');
-                            };
-
-                            xhr.send();
-                        } catch (error) {
-                            console.error('下载失败:', error);
-                            alert('下载失败，请重试');
-                        }
-                    }
-                });
-            }
-        });
-
-        // 添加音频文件路径定义（如果还没有的话）
-        const audioFiles = [
-            './music/旅程的终点.mp3',
-            './music/三天光明.mp3',
-            './music/新的岁月.mp3',
-            './music/过期的蛋糕.mp3'
-        ];
-
-        // 添加当前下载索引变量（如果还没有的话）
-        let currentDownloadIndex = null;
-
-        // 添加音频播放相关变量和函数
-        let currentPlaying = null;
-
-        // 预加载音频
-        const audioPlayers = [
-            new Audio('./music/旅程的终点.mp3'),
-            new Audio('./music/三天光明.mp3'),
-            new Audio('./music/新的岁月.mp3'),
-            new Audio('./music/过期的蛋糕.mp3')
-        ];
-
-        // 预加载设置
-        audioPlayers.forEach(player => {
-            player.preload = 'auto';
-            player.load();
-        });
-
-        // 音频播放控制函数
-        function toggleAudio(index) {
-            const audioItems = document.querySelectorAll('.audio-item');
-            
-            // 如果点击的是当前正在播放的音频
-            if (currentPlaying === index && !audioPlayers[index].paused) {
-                audioPlayers[index].pause();
-                audioItems[index].classList.remove('playing');
-                audioItems[index].querySelector('.play-indicator').textContent = '▶';
-                currentPlaying = null;
-                return;
-            }
-            
-            // 停止当前播放的音频
-            if (currentPlaying !== null) {
-                audioPlayers[currentPlaying].pause();
-                audioPlayers[currentPlaying].currentTime = 0;
-                audioItems[currentPlaying].classList.remove('playing');
-                audioItems[currentPlaying].querySelector('.play-indicator').textContent = '▶';
-            }
-            
-            // 播放新的音频
-            audioPlayers[index].play().catch(error => {
-                console.error('播放音频失败:', error);
-            });
-            audioItems[index].classList.add('playing');
-            audioItems[index].querySelector('.play-indicator').textContent = '⏸';
-            currentPlaying = index;
-            
-            // 音频播放结束时
-            audioPlayers[index].onended = function() {
-                audioItems[index].classList.remove('playing');
-                audioItems[index].querySelector('.play-indicator').textContent = '▶';
-                currentPlaying = null;
-            };
-        }
-
-        // 在 DOMContentLoaded 事件中添加音频相关初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            // ... 现有代码 ...
-
-            // 为音频播放器添加错误处理
-            audioPlayers.forEach((player, index) => {
-                player.addEventListener('error', (e) => {
-                    console.error(`音频 ${index} 加载失败:`, e);
-                    const audioItem = document.querySelectorAll('.audio-item')[index];
-                    if (audioItem) {
-                        audioItem.querySelector('.play-indicator').textContent = '⚠';
-                    }
-                });
-            });
-
-            // 初始化配音信息
-            updateVoiceActors();
-        });
-
-        // 修改音频信息配置，确保与致谢名单一致
-        const audioInfo = [
-            {
-                title: {
-                    zh: "旅程的终点",
-                    en: "End of Journey"
-                },
-                artist: {
-                    zh: "姚红",
-                    en: "Hannah Yao"
-                },
-                postProduction: "CoolApk@请叫我徐总"
-            },
-            {
-                title: {
-                    zh: "三天光明",
-                    en: "Three Days of Light"
-                },
-                artist: {
-                    zh: "谭如意",
-                    en: "Reese Tan"
-                },
-                postProduction: "CoolApk@请叫我徐总"
-            },
-            {
-                title: {
-                    zh: "新的岁月",
-                    en: "New Years"
-                },
-                artist: {
-                    zh: "姚红",
-                    en: "Hannah Yao"
-                },
-                postProduction: "CoolApk@请叫我徐总"
-            },
-            {
-                title: {
-                    zh: "过期的蛋糕",
-                    en: "Expired Cake"
-                },
-                artist: {
-                    zh: "姚红",
-                    en: "Hannah Yao"
-                },
-                postProduction: "CoolApk@请叫我徐总"
-            }
-        ];
-
-        // 修改更新配音信息的函数
-        function updateVoiceActors() {
-            const prefix = translations[currentLang].voiceActorPrefix;
-            document.querySelectorAll('.audio-artist').forEach((artist, index) => {
-                if (audioInfo[index] && audioInfo[index].artist) {
-                    const name = audioInfo[index].artist[currentLang];
-                    artist.textContent = `${prefix}${name}`;
-                    artist.style.display = 'block'; // 确保显示
-                    console.log(`更新配音信息 ${index}: ${prefix}${name}`);
-                }
-            });
-        }
-
-        // ... 现有代码 ...
-
-        // 添加点击展开详情的功能
-        function toggleDetails(element) {
-            // 获取所有卡片
-            const allCards = document.querySelectorAll('.acknowledgment-item');
-            
-            // 如果点击的不是当前展开的卡片，则关闭其他所有卡片
-            if (!element.classList.contains('expanded')) {
-                allCards.forEach(card => {
-                    if (card !== element) {
-                        card.classList.remove('expanded');
-                    }
-                });
-            }
-            
-            // 切换当前卡片的展开状态
-            element.classList.toggle('expanded');
-        }
-
-        // 添加滚动监听以触发动画
-        document.addEventListener('DOMContentLoaded', function() {
-            // ... 保持现有初始化代码 ...
-
-            // 创建 Intersection Observer
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.2
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    } else {
-                        // 当元素离开视口时移除 visible 类，这样再次滚动到时会重新触发动画
-                        entry.target.classList.remove('visible');
-                    }
-                });
-            }, observerOptions);
-
-            // 观察所有功能板块
-            document.querySelectorAll('.feature-item').forEach(item => {
-                observer.observe(item);
-            });
-        });
-
-        // 添加滚动提示点击处理
-        document.addEventListener('DOMContentLoaded', function() {
-            // ... 其他初始化代码 ...
-
-            // 添加滚动提示点击事件
-            const scrollHint = document.querySelector('.scroll-hint');
-            if (scrollHint) {
-                scrollHint.addEventListener('click', function() {
-                    document.querySelector('.content-wrapper').scrollIntoView({ 
-                        behavior: 'smooth' 
-                    });
-                });
-            }
-
-            // 添加滚轮事件处理
-            let isScrolling = false;
-            window.addEventListener('wheel', function(e) {
-                if (!isScrolling) {
-                    isScrolling = true;
-                    if (e.deltaY > 0 && window.scrollY < 100) {
-                        // 向下滚动且在顶部附近
-                        document.querySelector('.content-wrapper').scrollIntoView({ 
-                            behavior: 'smooth' 
-                        });
-                    } else if (e.deltaY < 0 && window.scrollY < window.innerHeight) {
-                        // 向上滚动且在第一屏
-                        window.scrollTo({ 
-                            top: 0, 
-                            behavior: 'smooth' 
-                        });
-                    }
-                    setTimeout(() => {
-                        isScrolling = false;
-                    }, 1000);
-                }
-            }, { passive: true });
-
-            // 添加触摸事件处理（针对移动设备）
-            let touchStartY = 0;
-            window.addEventListener('touchstart', function(e) {
-                touchStartY = e.touches[0].clientY;
-            }, { passive: true });
-
-            window.addEventListener('touchend', function(e) {
-                const touchEndY = e.changedTouches[0].clientY;
-                const deltaY = touchStartY - touchEndY;
-
-                if (Math.abs(deltaY) > 50) { // 50px的阈值
-                    if (deltaY > 0 && window.scrollY < 100) {
-                        // 向上滑动且在顶部附近
-                        document.querySelector('.content-wrapper').scrollIntoView({ 
-                            behavior: 'smooth' 
-                        });
-                    } else if (deltaY < 0 && window.scrollY < window.innerHeight) {
-                        // 向下滑动且在第一屏
-                        window.scrollTo({ 
-                            top: 0, 
-                            behavior: 'smooth' 
-                        });
-                    }
-                }
-            }, { passive: true });
-        });
-
-        // 优化滚动处理逻辑
-        document.addEventListener('DOMContentLoaded', function() {
-            const contentWrapper = document.querySelector('.content-wrapper');
-            let lastScrollTime = 0;
-            const scrollThreshold = 150; // 增加滚动阈值，使触发更容易
-
-            // 优化滚轮事件处理
-            window.addEventListener('wheel', function(e) {
-                const now = Date.now();
-                if (now - lastScrollTime > 500) { // 增加防抖时间
-                    lastScrollTime = now;
-                    
-                    if (e.deltaY > 0 && window.scrollY < scrollThreshold) {
-                        // 向下滚动
-                        contentWrapper.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    } else if (e.deltaY < 0 && window.scrollY < window.innerHeight) {
-                        // 向上滚动
-                        window.scrollTo({
-                            top: 0,
-                            behavior: 'smooth'
-                        });
-                    }
-                }
-            }, { passive: true });
-
-            // 优化触摸事件处理
-            let touchStartY = 0;
-            let touchStartTime = 0;
-
-            window.addEventListener('touchstart', function(e) {
-                touchStartY = e.touches[0].clientY;
-                touchStartTime = Date.now();
-            }, { passive: true });
-
-            window.addEventListener('touchend', function(e) {
-                const touchEndY = e.changedTouches[0].clientY;
-                const deltaY = touchStartY - touchEndY;
-                const deltaTime = Date.now() - touchStartTime;
-
-                // 添加速度判断，使快速滑动更容易触发
-                const speed = Math.abs(deltaY / deltaTime);
-
-                if (Math.abs(deltaY) > 30 || speed > 0.5) { // 降低触发阈值并考虑滑动速度
-                    if (deltaY > 0 && window.scrollY < scrollThreshold) {
-                        // 向上滑动
-                        contentWrapper.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    } else if (deltaY < 0 && window.scrollY < window.innerHeight) {
-                        // 向下滑动
-                        window.scrollTo({
-                            top: 0,
-                            behavior: 'smooth'
-                        });
-                    }
-                }
-            }, { passive: true });
-
-            // 优化滚动提示点击事件
-            const scrollHint = document.querySelector('.scroll-hint');
-            if (scrollHint) {
-                scrollHint.addEventListener('click', function() {
-                    contentWrapper.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                });
-            }
-        });
-
-        // 添加深色模式相关代码
-        document.addEventListener('DOMContentLoaded', function() {
-            // ... 保持其他初始化代码 ...
-
-            // 深色模式切换功能
-            const darkModeToggle = document.getElementById('darkModeToggle');
-            if (darkModeToggle) {
-                // 检查本地存储中的深色模式设置
-                const isDarkMode = localStorage.getItem('darkMode') === 'true';
-                document.body.classList.toggle('dark-mode', isDarkMode);
-
-                // 添加点击事件监听
-                darkModeToggle.addEventListener('click', function() {
-                    document.body.classList.toggle('dark-mode');
-                    localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-                });
-            }
-        });
-
-        // 监听滚动事件，控制 GitHub 按钮的显示/隐藏
-        window.addEventListener('scroll', function() {
-            const githubLink = document.querySelector('.github-link');
-            if (window.scrollY > window.innerHeight * 0.5) {  // 当滚动超过半屏时
-                githubLink.style.opacity = '0';
-                githubLink.style.visibility = 'hidden';
+            if (document.body.classList.contains('dark-mode')) {
+                button.textContent = isEnglish ? 'Light' : '浅色';
             } else {
-                githubLink.style.opacity = '1';
-                githubLink.style.visibility = 'visible';
+                button.textContent = isEnglish ? 'Dark' : '深色';
             }
-        });
+        }
+        
+        // 语言切换
+        function toggleLanguage() {
+            const button = document.querySelector('.lang-switch');
+            const themeButton = document.querySelector('.theme-switch');
+            
+            if (button.textContent === 'English') {
+                translateToEnglish();
+                button.textContent = 'Chinese';
+                themeButton.textContent = document.body.classList.contains('dark-mode') ? '浅色' : '深色';
+            } else {
+                translateToChinese();
+                button.textContent = 'English';
+                themeButton.textContent = document.body.classList.contains('dark-mode') ? '浅色' : '深色';
+            }
+        }
+        
+        // 打字机效果函数
+        function typeWriter(element, text, speed = 100) {
+            let i = 0;
+            element.textContent = '';
+            return new Promise(resolve => {
+                function type() {
+                    if (i < text.length) {
+                        element.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(type, speed);
+                    } else {
+                        resolve();
+                    }
+                }
+                type();
+            });
+        }
+        
+        // 依次显示所有语录
+        async function showQuotes(quotes, isEnglish = false) {
+            const elements = document.querySelectorAll('.typewriter');
+            for (let i = 0; i < elements.length; i++) {
+                await typeWriter(elements[i], quotes[i], 50);
+            }
+        }
+        
+        // 检查元素是否在视图中
+        function isElementInViewport(el) {
+            const rect = el.getBoundingClientRect();
+            return (
+                rect.top >= 0 &&
+                rect.left >= 0 &&
+                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+                rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+            );
+        }
+        
+        // 处理滚动事件
+        let quotesShown = false;
+        function handleScroll() {
+            const quotesSection = document.querySelector('#quotes');
+            if (!quotesShown && isElementInViewport(quotesSection)) {
+                quotesShown = true;
+                const isEnglish = document.querySelector('.lang-switch').textContent === 'Chinese';
+                if (isEnglish) {
+                    const englishQuotes = [
+                        '"Every entrepreneur dreams of changing the world."',
+                        '"Always believe that something wonderful is about to happen."',
+                        '"When you\'re standing in the wind, even a pig can fly."',
+                        '"Xiaomi aims to be a company that lets everyone in the world enjoy technology."'
+                    ];
+                    showQuotes(englishQuotes);
+                } else {
+                    const chineseQuotes = [
+                        '"每一个创业者都怀揣着改变世界的梦想。"',
+                        '"永远相信美好的事情即将发生。"',
+                        '"站在风口上，猪都能飞起来。"',
+                        '"小米要做一家让全球每个人都能享受科技美好生活的公司。"'
+                    ];
+                    showQuotes(chineseQuotes);
+                }
+            }
+        }
+        
+        // 添加滚动监听
+        window.addEventListener('scroll', handleScroll);
+        
+        // 修改英文翻译函数
+        function translateToEnglish() {
+            // 更新标题
+            document.title = "Lei Jun Profile";
+            document.querySelector('h1').textContent = 'Lei Jun';
+            
+            // 更新导航
+            document.querySelector('.nav').innerHTML = `
+                <a href="#intro">Introduction</a>
+                <a href="#career">Career</a>
+                <a href="#achievements">Achievements</a>
+                <a href="#quotes">Quotes</a>
+            `;
+            
+            // 更新简介部分
+            document.querySelector('#intro h2').textContent = 'Introduction';
+            document.querySelector('#intro').querySelectorAll('p')[0].textContent = 
+                'Lei Jun (born December 16, 1969) is a Chinese entrepreneur and angel investor from Xiantao, Hubei Province. He currently serves as the Chairman and CEO of Xiaomi Technology, Chairman of Kingsoft Software, and a board member of Wuhan University. He is known as the founder of "China\'s Apple" Xiaomi and the "Father of Internet Phones".';
+            document.querySelector('#intro').querySelectorAll('p')[1].textContent = 
+                'In 1987, Lei Jun graduated from Hubei Mianyang Middle School (now Hubei Xiantao Middle School) and was admitted to the Computer Science Department of Wuhan University. During his university years, he completed all required credits in just 2 years. He co-founded the Yellow Rose Studio, developed software tools like BITLOK encryption and Immune 90 antivirus, and authored two books: "Deep DOS Programming" and "Deep Windows Programming".';
+            
+            // 更新职业生涯部分
+            document.querySelector('#career h2').textContent = 'Career';
+            const careerParagraphs = document.querySelector('#career').querySelectorAll('p');
+            careerParagraphs[0].textContent = 
+                'After graduating in 1991, he moved to Beijing and worked at Beijing Telemetry Technology Research Institute. Later that year, he met Qiu Bojun and joined Kingsoft Software\'s Zhuhai R&D department as an intern in early 1992, becoming a full-time employee in July. Starting as a programmer, he gradually rose through the ranks and became CEO of Kingsoft in 1998.';
+            careerParagraphs[1].textContent = 
+                'In 2007, after successfully leading Kingsoft\'s IPO in Hong Kong, he stepped down as CEO. On April 6, 2010, Lei Jun co-founded Xiaomi Technology with Lin Bin and others. Under his leadership, Xiaomi has grown from a startup to a Fortune 500 company, becoming the world\'s third-largest smartphone manufacturer and building the world\'s largest consumer IoT platform.';
+            careerParagraphs[2].textContent = 
+                'In 2019, Xiaomi became one of the Fortune 500 companies, being the youngest company on the list. On November 29, 2023, Lei Jun donated 1.3 billion yuan to his alma mater Wuhan University, setting a record for the largest single personal cash donation to a Chinese university.';
+            
+            // 更新成就部分
+            document.querySelector('#achievements h2').textContent = 'Major Achievements';
+            const achievements = [
+                'Chairman of Kingsoft Software',
+                'Founder, Chairman and CEO of Xiaomi Group',
+                'Deputy to the 12th and 13th National People\'s Congress',
+                'Vice Chairman of the 12th All-China Federation of Industry and Commerce',
+                'Honorary Professor and Board Member of Wuhan University',
+                'Named one of TIME Magazine\'s "100 Most Influential People" in 2015',
+                'Awarded "Outstanding Builder of Socialism with Chinese Characteristics" in 2019',
+                'Ranked 143rd on Forbes Global Billionaires List with $9.6 billion in 2019',
+                'Ranked 75th on Forbes Global Billionaires List with $23 billion in 2021'
+            ];
+            document.querySelector('#achievements ul').innerHTML = 
+                achievements.map(item => `<li>${item}</li>`).join('');
+            
+            // 更新语录部分
+            document.querySelector('#quotes h2').textContent = 'Famous Quotes';
+            // 重置打字效果状态
+            quotesShown = false;
+            document.querySelectorAll('.typewriter').forEach(el => el.textContent = '');
+            handleScroll();
+        }
+        
+        // 修改中文翻译函数
+        function translateToChinese() {
+            // 更新标题
+            document.title = "雷军简介";
+            document.querySelector('h1').textContent = '雷军';
+            
+            // 更新导航
+            document.querySelector('.nav').innerHTML = `
+                <a href="#intro">简介</a>
+                <a href="#career">职业生涯</a>
+                <a href="#achievements">主要成就</a>
+                <a href="#quotes">经典语录</a>
+            `;
+            
+            // 更新简介部分
+            document.querySelector('#intro h2').textContent = '简介';
+            document.querySelector('#intro').querySelectorAll('p')[0].textContent = 
+                '雷军（1969年12月16日－），中国湖北省仙桃市人，无党派人士，知名企业家、天使投资人。现任小米科技董事长兼CEO，金山软件董事长，武汉大学校董。被媒体誉为"中国苹果"小米的创始人和"互联网手机之父"。';
+            document.querySelector('#intro').querySelectorAll('p')[1].textContent = 
+                '1987年，雷军毕业于湖北沔阳中学（现湖北省仙桃中学），考入武汉大学计算机科学系。在校期间，他仅用2年时间就修完了大学毕业所需的全部学分。期间与朋友合作成立黄玫瑰工作室，开发了BITLOK加密软件、免疫90杀毒软件等工具软件，并编撰了《深入DOS编程》和《深入Windows编程》两本书。';
+            
+            // 更新职业生涯部分
+            document.querySelector('#career h2').textContent = '职业生涯';
+            const careerParagraphs = document.querySelector('#career').querySelectorAll('p');
+            careerParagraphs[0].textContent = 
+                '1991年毕业后来到北京，就职于北京遥测技术研究所。同年底结识求伯君，1992年初在金山软件的珠海研发部实习，7月正式加入金山软件。他从一名程序员做起，逐步晋升，1998年出任金山软件CEO。';
+            careerParagraphs[1].textContent = 
+                '2007年，他带领金山在香港成功上市后卸任CEO。2010年4月6日，雷军与林斌等人共同创办小米科技公司。在他的带领下，小米从一家初创企业发展成为世界500强企业、全球第三大智能手机供应商，并建成了全球最大消费类IoT物联网平台。';
+            careerParagraphs[2].textContent = 
+                '2019年，小米成为世界500强企业之一，同时也是其中最年轻的公司。2023年11月29日，雷军向母校武汉大学捐赠13亿元现金，创中国高校单笔个人现金捐赠纪录。';
+            
+            // 更新成就部分
+            document.querySelector('#achievements h2').textContent = '主要成就';
+            const achievements = [
+                '金山软件董事长',
+                '小米集团创始人、董事长兼CEO',
+                '第十二、十三届全国人民代表大会代表',
+                '第十二届中华全国工商业联合会副主席',
+                '武汉大学名誉教授、校董',
+                '2015年入选《时代周刊》"百位最具影响力人物"',
+                '2019年获"优秀中国特色社会主义事业建设者"称号',
+                '2019年以96亿美元财富排名福布斯全球亿万富豪榜第143位',
+                '2021年以230亿美元财富位列《福布斯全球富豪榜》第75名'
+            ];
+            document.querySelector('#achievements ul').innerHTML = 
+                achievements.map(item => `<li>${item}</li>`).join('');
+            
+            // 更新语录部分
+            document.querySelector('#quotes h2').textContent = '经典语录';
+            // 重置打字效果状态
+            quotesShown = false;
+            document.querySelectorAll('.typewriter').forEach(el => el.textContent = '');
+            handleScroll();
+        }
     </script>
 </body>
-</html> 
+</html>
